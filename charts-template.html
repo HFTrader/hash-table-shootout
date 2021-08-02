@@ -54,6 +54,36 @@
         tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' bytes/(ops/nsec.)'; }
     };
 
+    yaxis_cache_misses_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' cache misses'; }
+    };
+
+    yaxis_branch_misses_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' branch misses'; }
+    };
+
+    yaxis_cycles_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' cycles'; }
+    };
+
+    yaxis_branches_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' branches'; }
+    };
+
+    yaxis_instructions_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' instructions'; }
+    };
+
+    yaxis_page_faults_settings = {
+        min: 0,
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' keys per page fault'; }
+    };
+
     legend_settings = {
         position: 'nw',
         backgroundOpacity: 0
@@ -80,6 +110,54 @@
         grid: grid_settings,
         xaxis: xaxis_settings,
         yaxis: yaxis_bopsnsec_settings,
+        legend: legend_settings
+    };
+
+    cache_misses_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_cache_misses_settings,
+        legend: legend_settings
+    };
+
+    branch_misses_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_branch_misses_settings,
+        legend: legend_settings
+    };
+
+    cycles_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_cycles_settings,
+        legend: legend_settings
+    };
+
+    branches_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_branches_settings,
+        legend: legend_settings
+    };
+
+    instructions_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_instructions_settings,
+        legend: legend_settings
+    };
+
+    page_faults_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_page_faults_settings,
         legend: legend_settings
     };
 
@@ -150,100 +228,243 @@
         plot_according_to_choices();
     }
     
+
+
+
     
     function plot_all_charts(redraw_only = false) {
         plot_chart(chart_data['insert_random_shuffle_range_runtime'], '#insert_random_shuffle_range_runtime', '#insert_random_shuffle_range_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['insert_random_shuffle_range_memory'], '#insert_random_shuffle_range_memory', '#insert_random_shuffle_range_memory_choices', memory_settings, redraw_only);
         plot_chart(chart_data['insert_random_shuffle_range_bopsnsec'], '#insert_random_shuffle_range_bopsnsec', '#insert_random_shuffle_range_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_cache_misses'], '#insert_random_shuffle_range_cache_misses', '#insert_random_shuffle_range_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_branch_misses'], '#insert_random_shuffle_range_branch_misses', '#insert_random_shuffle_range_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_cycles'], '#insert_random_shuffle_range_cycles', '#insert_random_shuffle_range_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_branches'], '#insert_random_shuffle_range_branches', '#insert_random_shuffle_range_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_instructions'], '#insert_random_shuffle_range_instructions', '#insert_random_shuffle_range_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_random_shuffle_range_page_faults'], '#insert_random_shuffle_range_page_faults', '#insert_random_shuffle_range_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['reinsert_random_shuffle_range_runtime'], '#reinsert_random_shuffle_range_runtime', '#reinsert_random_shuffle_range_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['reinsert_random_shuffle_range_bopsnsec'], '#reinsert_random_shuffle_range_bopsnsec', '#reinsert_random_shuffle_range_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_cache_misses'], '#reinsert_random_shuffle_range_cache_misses', '#reinsert_random_shuffle_range_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_branch_misses'], '#reinsert_random_shuffle_range_branch_misses', '#reinsert_random_shuffle_range_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_cycles'], '#reinsert_random_shuffle_range_cycles', '#reinsert_random_shuffle_range_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_branches'], '#reinsert_random_shuffle_range_branches', '#reinsert_random_shuffle_range_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_instructions'], '#reinsert_random_shuffle_range_instructions', '#reinsert_random_shuffle_range_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_shuffle_range_page_faults'], '#reinsert_random_shuffle_range_page_faults', '#reinsert_random_shuffle_range_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_random_shuffle_range_runtime'], '#read_random_shuffle_range_runtime', '#read_random_shuffle_range_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_random_shuffle_range_bopsnsec'], '#read_random_shuffle_range_bopsnsec', '#read_random_shuffle_range_bopsnsec_choices', bopsnsec_settings, redraw_only);
-
-	
+        plot_chart(chart_data['read_random_shuffle_range_cache_misses'], '#read_random_shuffle_range_cache_misses', '#read_random_shuffle_range_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_shuffle_range_branch_misses'], '#read_random_shuffle_range_branch_misses', '#read_random_shuffle_range_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_shuffle_range_cycles'], '#read_random_shuffle_range_cycles', '#read_random_shuffle_range_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_random_shuffle_range_branches'], '#read_random_shuffle_range_branches', '#read_random_shuffle_range_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_random_shuffle_range_instructions'], '#read_random_shuffle_range_instructions', '#read_random_shuffle_range_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_random_shuffle_range_page_faults'], '#read_random_shuffle_range_page_faults', '#read_random_shuffle_range_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['insert_random_full_runtime'], '#insert_random_full_runtime', '#insert_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['insert_random_full_bopsnsec'], '#insert_random_full_bopsnsec', '#insert_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_memory'], '#insert_random_full_memory', '#insert_random_full_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_cache_misses'], '#insert_random_full_cache_misses', '#insert_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_branch_misses'], '#insert_random_full_branch_misses', '#insert_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_cycles'], '#insert_random_full_cycles', '#insert_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_branches'], '#insert_random_full_branches', '#insert_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_instructions'], '#insert_random_full_instructions', '#insert_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_page_faults'], '#insert_random_full_page_faults', '#insert_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['reinsert_random_full_runtime'], '#reinsert_random_full_runtime', '#reinsert_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['reinsert_random_full_bopsnsec'], '#reinsert_random_full_bopsnsec', '#reinsert_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_cache_misses'], '#reinsert_random_full_cache_misses', '#reinsert_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_branch_misses'], '#reinsert_random_full_branch_misses', '#reinsert_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_cycles'], '#reinsert_random_full_cycles', '#reinsert_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_branches'], '#reinsert_random_full_branches', '#reinsert_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_instructions'], '#reinsert_random_full_instructions', '#reinsert_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['reinsert_random_full_page_faults'], '#reinsert_random_full_page_faults', '#reinsert_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['insert_random_full_reserve_runtime'], '#insert_random_full_reserve_runtime', '#insert_random_full_reserve_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['insert_random_full_reserve_bopsnsec'], '#insert_random_full_reserve_bopsnsec', '#insert_random_full_reserve_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_memory'], '#insert_random_full_reserve_memory', '#insert_random_full_reserve_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_cache_misses'], '#insert_random_full_reserve_cache_misses', '#insert_random_full_reserve_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_branch_misses'], '#insert_random_full_reserve_branch_misses', '#insert_random_full_reserve_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_cycles'], '#insert_random_full_reserve_cycles', '#insert_random_full_reserve_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_branches'], '#insert_random_full_reserve_branches', '#insert_random_full_reserve_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_instructions'], '#insert_random_full_reserve_instructions', '#insert_random_full_reserve_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_random_full_reserve_page_faults'], '#insert_random_full_reserve_page_faults', '#insert_random_full_reserve_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_random_full_runtime'], '#read_random_full_runtime', '#read_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_random_full_bopsnsec'], '#read_random_full_bopsnsec', '#read_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_cache_misses'], '#read_random_full_cache_misses', '#read_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_branch_misses'], '#read_random_full_branch_misses', '#read_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_cycles'], '#read_random_full_cycles', '#read_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_branches'], '#read_random_full_branches', '#read_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_instructions'], '#read_random_full_instructions', '#read_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_page_faults'], '#read_random_full_page_faults', '#read_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_miss_random_full_runtime'], '#read_miss_random_full_runtime', '#read_miss_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_miss_random_full_bopsnsec'], '#read_miss_random_full_bopsnsec', '#read_miss_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_cache_misses'], '#read_miss_random_full_cache_misses', '#read_miss_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_branch_misses'], '#read_miss_random_full_branch_misses', '#read_miss_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_cycles'], '#read_miss_random_full_cycles', '#read_miss_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_branches'], '#read_miss_random_full_branches', '#read_miss_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_instructions'], '#read_miss_random_full_instructions', '#read_miss_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_miss_random_full_page_faults'], '#read_miss_random_full_page_faults', '#read_miss_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_random_full_after_delete_runtime'], '#read_random_full_after_delete_runtime', '#read_random_full_after_delete_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_random_full_after_delete_bopsnsec'], '#read_random_full_after_delete_bopsnsec', '#read_random_full_after_delete_bopsnsec_choices', bopsnsec_settings, redraw_only);
-	
+        plot_chart(chart_data['read_random_full_after_delete_cache_misses'], '#read_random_full_after_delete_cache_misses', '#read_random_full_after_delete_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_after_delete_branch_misses'], '#read_random_full_after_delete_branch_misses', '#read_random_full_after_delete_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_after_delete_cycles'], '#read_random_full_after_delete_cycles', '#read_random_full_after_delete_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_after_delete_branches'], '#read_random_full_after_delete_branches', '#read_random_full_after_delete_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_after_delete_instructions'], '#read_random_full_after_delete_instructions', '#read_random_full_after_delete_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_random_full_after_delete_page_faults'], '#read_random_full_after_delete_page_faults', '#read_random_full_after_delete_page_faults_choices', page_faults_settings, redraw_only);
+
         plot_chart(chart_data['iteration_random_full_runtime'], '#iteration_random_full_runtime', '#iteration_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['iteration_random_full_bopsnsec'], '#iteration_random_full_bopsnsec', '#iteration_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_cache_misses'], '#iteration_random_full_cache_misses', '#iteration_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_branch_misses'], '#iteration_random_full_branch_misses', '#iteration_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_cycles'], '#iteration_random_full_cycles', '#iteration_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_branches'], '#iteration_random_full_branches', '#iteration_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_instructions'], '#iteration_random_full_instructions', '#iteration_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['iteration_random_full_page_faults'], '#iteration_random_full_page_faults', '#iteration_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['delete_random_full_runtime'], '#delete_random_full_runtime', '#delete_random_full_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['delete_random_full_bopsnsec'], '#delete_random_full_bopsnsec', '#delete_random_full_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_cache_misses'], '#delete_random_full_cache_misses', '#delete_random_full_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_branch_misses'], '#delete_random_full_branch_misses', '#delete_random_full_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_cycles'], '#delete_random_full_cycles', '#delete_random_full_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_branches'], '#delete_random_full_branches', '#delete_random_full_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_instructions'], '#delete_random_full_instructions', '#delete_random_full_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['delete_random_full_page_faults'], '#delete_random_full_page_faults', '#delete_random_full_page_faults_choices', page_faults_settings, redraw_only);
 
-        plot_chart(chart_data['insert_random_full_memory'], '#insert_random_full_memory', '#insert_random_full_memory_choices', memory_settings, redraw_only);
-	
-        plot_chart(chart_data['insert_random_full_reserve_memory'], '#insert_random_full_reserve_memory', '#insert_random_full_reserve_memory_choices', memory_settings, redraw_only);
-
-
-	
         plot_chart(chart_data['insert_small_string_runtime'], '#insert_small_string_runtime', '#insert_small_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['insert_small_string_bopsnsec'], '#insert_small_string_bopsnsec', '#insert_small_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_memory'], '#insert_small_string_memory', '#insert_small_string_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_cache_misses'], '#insert_small_string_cache_misses', '#insert_small_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_branch_misses'], '#insert_small_string_branch_misses', '#insert_small_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_cycles'], '#insert_small_string_cycles', '#insert_small_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_branches'], '#insert_small_string_branches', '#insert_small_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_instructions'], '#insert_small_string_instructions', '#insert_small_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_page_faults'], '#insert_small_string_page_faults', '#insert_small_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['reinsert_small_string_runtime'], '#reinsert_small_string_runtime', '#reinsert_small_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['reinsert_small_string_bopsnsec'], '#reinsert_small_string_bopsnsec', '#reinsert_small_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_cache_misses'], '#reinsert_small_string_cache_misses', '#reinsert_small_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_branch_misses'], '#reinsert_small_string_branch_misses', '#reinsert_small_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_cycles'], '#reinsert_small_string_cycles', '#reinsert_small_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_branches'], '#reinsert_small_string_branches', '#reinsert_small_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_instructions'], '#reinsert_small_string_instructions', '#reinsert_small_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['reinsert_small_string_page_faults'], '#reinsert_small_string_page_faults', '#reinsert_small_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['insert_small_string_reserve_runtime'], '#insert_small_string_reserve_runtime', '#insert_small_string_reserve_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['insert_small_string_reserve_bopsnsec'], '#insert_small_string_reserve_bopsnsec', '#insert_small_string_reserve_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_memory'], '#insert_small_string_reserve_memory', '#insert_small_string_reserve_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_cache_misses'], '#insert_small_string_reserve_cache_misses', '#insert_small_string_reserve_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_branch_misses'], '#insert_small_string_reserve_branch_misses', '#insert_small_string_reserve_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_cycles'], '#insert_small_string_reserve_cycles', '#insert_small_string_reserve_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_branches'], '#insert_small_string_reserve_branches', '#insert_small_string_reserve_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_instructions'], '#insert_small_string_reserve_instructions', '#insert_small_string_reserve_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_small_string_reserve_page_faults'], '#insert_small_string_reserve_page_faults', '#insert_small_string_reserve_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_small_string_runtime'], '#read_small_string_runtime', '#read_small_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_small_string_bopsnsec'], '#read_small_string_bopsnsec', '#read_small_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_cache_misses'], '#read_small_string_cache_misses', '#read_small_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_branch_misses'], '#read_small_string_branch_misses', '#read_small_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_cycles'], '#read_small_string_cycles', '#read_small_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_branches'], '#read_small_string_branches', '#read_small_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_instructions'], '#read_small_string_instructions', '#read_small_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_page_faults'], '#read_small_string_page_faults', '#read_small_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_miss_small_string_runtime'], '#read_miss_small_string_runtime', '#read_miss_small_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_miss_small_string_bopsnsec'], '#read_miss_small_string_bopsnsec', '#read_miss_small_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_cache_misses'], '#read_miss_small_string_cache_misses', '#read_miss_small_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_branch_misses'], '#read_miss_small_string_branch_misses', '#read_miss_small_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_cycles'], '#read_miss_small_string_cycles', '#read_miss_small_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_branches'], '#read_miss_small_string_branches', '#read_miss_small_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_instructions'], '#read_miss_small_string_instructions', '#read_miss_small_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_miss_small_string_page_faults'], '#read_miss_small_string_page_faults', '#read_miss_small_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_small_string_after_delete_runtime'], '#read_small_string_after_delete_runtime', '#read_small_string_after_delete_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_small_string_after_delete_bopsnsec'], '#read_small_string_after_delete_bopsnsec', '#read_small_string_after_delete_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_cache_misses'], '#read_small_string_after_delete_cache_misses', '#read_small_string_after_delete_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_branch_misses'], '#read_small_string_after_delete_branch_misses', '#read_small_string_after_delete_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_cycles'], '#read_small_string_after_delete_cycles', '#read_small_string_after_delete_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_branches'], '#read_small_string_after_delete_branches', '#read_small_string_after_delete_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_instructions'], '#read_small_string_after_delete_instructions', '#read_small_string_after_delete_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_small_string_after_delete_page_faults'], '#read_small_string_after_delete_page_faults', '#read_small_string_after_delete_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['delete_small_string_runtime'], '#delete_small_string_runtime', '#delete_small_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['delete_small_string_bopsnsec'], '#delete_small_string_bopsnsec', '#delete_small_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_cache_misses'], '#delete_small_string_cache_misses', '#delete_small_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_branch_misses'], '#delete_small_string_branch_misses', '#delete_small_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_cycles'], '#delete_small_string_cycles', '#delete_small_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_branches'], '#delete_small_string_branches', '#delete_small_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_instructions'], '#delete_small_string_instructions', '#delete_small_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['delete_small_string_page_faults'], '#delete_small_string_page_faults', '#delete_small_string_page_faults_choices', page_faults_settings, redraw_only);
 
-        plot_chart(chart_data['insert_small_string_memory'], '#insert_small_string_memory', '#insert_small_string_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_string_runtime'], '#insert_string_runtime', '#insert_string_runtime_choices', runtime_settings, redraw_only);
+        plot_chart(chart_data['insert_string_memory'], '#insert_string_memory', '#insert_string_memory_choices', memory_settings, redraw_only);
+        plot_chart(chart_data['insert_string_bopsnsec'], '#insert_string_bopsnsec', '#insert_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_string_cache_misses'], '#insert_string_cache_misses', '#insert_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_string_branch_misses'], '#insert_string_branch_misses', '#insert_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_string_cycles'], '#insert_string_cycles', '#insert_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_string_branches'], '#insert_string_branches', '#insert_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_string_instructions'], '#insert_string_instructions', '#insert_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_string_page_faults'], '#insert_string_page_faults', '#insert_string_page_faults_choices', page_faults_settings, redraw_only);
 
-        plot_chart(chart_data['insert_small_string_reserve_memory'], '#insert_small_string_reserve_memory', '#insert_small_string_reserve_memory_choices', memory_settings, redraw_only);
-
-
-
-	plot_chart(chart_data['insert_string_runtime'], '#insert_string_runtime', '#insert_string_runtime_choices', runtime_settings, redraw_only);
-	plot_chart(chart_data['insert_string_bopsnsec'], '#insert_string_bopsnsec', '#insert_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
-
-	plot_chart(chart_data['reinsert_string_runtime'], '#reinsert_string_runtime', '#reinsert_string_runtime_choices', runtime_settings, redraw_only);
-	plot_chart(chart_data['reinsert_string_bopsnsec'], '#reinsert_string_bopsnsec', '#reinsert_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_runtime'], '#reinsert_string_runtime', '#reinsert_string_runtime_choices', runtime_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_bopsnsec'], '#reinsert_string_bopsnsec', '#reinsert_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_cache_misses'], '#reinsert_string_cache_misses', '#reinsert_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_branch_misses'], '#reinsert_string_branch_misses', '#reinsert_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_cycles'], '#reinsert_string_cycles', '#reinsert_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_branches'], '#reinsert_string_branches', '#reinsert_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_instructions'], '#reinsert_string_instructions', '#reinsert_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['reinsert_string_page_faults'], '#reinsert_string_page_faults', '#reinsert_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['insert_string_reserve_runtime'], '#insert_string_reserve_runtime', '#insert_string_reserve_runtime_choices', runtime_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_memory'], '#insert_string_reserve_memory', '#insert_string_reserve_memory_choices', memory_settings, redraw_only);
         plot_chart(chart_data['insert_string_reserve_bopsnsec'], '#insert_string_reserve_bopsnsec', '#insert_string_reserve_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_cache_misses'], '#insert_string_reserve_cache_misses', '#insert_string_reserve_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_branch_misses'], '#insert_string_reserve_branch_misses', '#insert_string_reserve_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_cycles'], '#insert_string_reserve_cycles', '#insert_string_reserve_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_branches'], '#insert_string_reserve_branches', '#insert_string_reserve_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_instructions'], '#insert_string_reserve_instructions', '#insert_string_reserve_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['insert_string_reserve_page_faults'], '#insert_string_reserve_page_faults', '#insert_string_reserve_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_string_runtime'], '#read_string_runtime', '#read_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_string_bopsnsec'], '#read_string_bopsnsec', '#read_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_string_cache_misses'], '#read_string_cache_misses', '#read_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_string_branch_misses'], '#read_string_branch_misses', '#read_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_string_cycles'], '#read_string_cycles', '#read_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_string_branches'], '#read_string_branches', '#read_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_string_instructions'], '#read_string_instructions', '#read_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_string_page_faults'], '#read_string_page_faults', '#read_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_miss_string_runtime'], '#read_miss_string_runtime', '#read_miss_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_miss_string_bopsnsec'], '#read_miss_string_bopsnsec', '#read_miss_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_cache_misses'], '#read_miss_string_cache_misses', '#read_miss_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_branch_misses'], '#read_miss_string_branch_misses', '#read_miss_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_cycles'], '#read_miss_string_cycles', '#read_miss_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_branches'], '#read_miss_string_branches', '#read_miss_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_instructions'], '#read_miss_string_instructions', '#read_miss_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_miss_string_page_faults'], '#read_miss_string_page_faults', '#read_miss_string_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['read_string_after_delete_runtime'], '#read_string_after_delete_runtime', '#read_string_after_delete_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['read_string_after_delete_bopsnsec'], '#read_string_after_delete_bopsnsec', '#read_string_after_delete_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_cache_misses'], '#read_string_after_delete_cache_misses', '#read_string_after_delete_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_branch_misses'], '#read_string_after_delete_branch_misses', '#read_string_after_delete_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_cycles'], '#read_string_after_delete_cycles', '#read_string_after_delete_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_branches'], '#read_string_after_delete_branches', '#read_string_after_delete_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_instructions'], '#read_string_after_delete_instructions', '#read_string_after_delete_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['read_string_after_delete_page_faults'], '#read_string_after_delete_page_faults', '#read_string_after_delete_page_faults_choices', page_faults_settings, redraw_only);
 
         plot_chart(chart_data['delete_string_runtime'], '#delete_string_runtime', '#delete_string_runtime_choices', runtime_settings, redraw_only);
         plot_chart(chart_data['delete_string_bopsnsec'], '#delete_string_bopsnsec', '#delete_string_bopsnsec_choices', bopsnsec_settings, redraw_only);
+        plot_chart(chart_data['delete_string_cache_misses'], '#delete_string_cache_misses', '#delete_string_cache_misses_choices', cache_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_string_branch_misses'], '#delete_string_branch_misses', '#delete_string_branch_misses_choices', branch_misses_settings, redraw_only);
+        plot_chart(chart_data['delete_string_cycles'], '#delete_string_cycles', '#delete_string_cycles_choices', cycles_settings, redraw_only);
+        plot_chart(chart_data['delete_string_branches'], '#delete_string_branches', '#delete_string_branches_choices', branches_settings, redraw_only);
+        plot_chart(chart_data['delete_string_instructions'], '#delete_string_instructions', '#delete_string_instructions_choices', instructions_settings, redraw_only);
+        plot_chart(chart_data['delete_string_page_faults'], '#delete_string_page_faults', '#delete_string_page_faults_choices', page_faults_settings, redraw_only);
 
-        plot_chart(chart_data['insert_string_memory'], '#insert_string_memory', '#insert_string_memory_choices', memory_settings, redraw_only);
-        plot_chart(chart_data['insert_string_reserve_memory'], '#insert_string_reserve_memory', '#insert_string_reserve_memory_choices', memory_settings, redraw_only);
     }
 
     $(function () {
@@ -347,6 +568,31 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 <div class="chart" id="insert_random_shuffle_range_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_random_shuffle_range_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_cycles_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_branches_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_instructions_choices"></ul>
+
+<div class="chart" id="insert_random_shuffle_range_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_shuffle_range_page_faults_choices"></ul>
+
 <!-- END_INSERT_RANDOM_SHUFFLE_RANGE -->
 
 
@@ -364,6 +610,31 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 <div class="chart" id="reinsert_random_shuffle_range_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="reinsert_random_shuffle_range_bopsnsec_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_cache_misses_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_branch_misses_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_cycles_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_branches_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_instructions_choices"></ul>
+
+<div class="chart" id="reinsert_random_shuffle_range_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_shuffle_range_page_faults_choices"></ul>
+
 <!-- END_REINSERT_RND_SHUFFLE_RANGE -->
 
 
@@ -380,6 +651,31 @@ We then read each key-value pair in a different and random order than the one th
 <div class="chart" id="read_random_shuffle_range_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_random_shuffle_range_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_cache_misses_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_branch_misses_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_cycles_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_branches_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_instructions_choices"></ul>
+
+<div class="chart" id="read_random_shuffle_range_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_shuffle_range_page_faults_choices"></ul>
+
 <!-- END_READ_RANDOM_SHUFFLE_RANGE -->
 
 
@@ -400,7 +696,33 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 <div class="chart" id="insert_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_cycles_choices"></ul>
+
+<div class="chart" id="insert_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_branches_choices"></ul>
+
+<div class="chart" id="insert_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_instructions_choices"></ul>
+
+<div class="chart" id="insert_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_page_faults_choices"></ul>
+
 <!-- END_INSERT_RANDOM_FULL -->
+
 
 
 <!-- BEGIN_REINSERT_RND_FULL -->
@@ -419,6 +741,32 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 <div class="chart" id="reinsert_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="reinsert_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_cycles_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_branches_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_instructions_choices"></ul>
+
+<div class="chart" id="reinsert_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_random_full_page_faults_choices"></ul>
+
+
 <!-- END_REINSERT_RND_FULL -->
 
 
@@ -439,6 +787,32 @@ It provides a fair comparison even if the growth factor of each hash map is diff
 <div class="chart" id="insert_random_full_reserve_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_random_full_reserve_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_cycles_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_branches_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_instructions_choices"></ul>
+
+<div class="chart" id="insert_random_full_reserve_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_random_full_reserve_page_faults_choices"></ul>
+
+
 <!-- END_INSERT_RANDOM_F_RESERVE -->
 
 <!-- BEGIN_READ_RANDOM_FULL -->
@@ -454,6 +828,32 @@ We then read each key-value pair in a different and random order than the one th
 <div class="chart" id="read_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="read_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="read_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_cycles_choices"></ul>
+
+<div class="chart" id="read_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_branches_choices"></ul>
+
+<div class="chart" id="read_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_instructions_choices"></ul>
+
+<div class="chart" id="read_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_page_faults_choices"></ul>
+
+
 <!-- END_READ_RANDOM_FULL -->
 
 <!-- BEGIN_READ_MISS_RANDOM_FULL -->
@@ -470,6 +870,32 @@ we try to search for these unknown elements in the hash map.</p>
 <div class="chart" id="read_miss_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_miss_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_cycles_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_branches_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_instructions_choices"></ul>
+
+<div class="chart" id="read_miss_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_random_full_page_faults_choices"></ul>
+
+
 <!-- END_READ_MISS_RANDOM_FULL -->
 
 <!-- BEGIN_DELETE_RANDOM_FULL -->
@@ -485,6 +911,32 @@ We then delete each key one by one in a different and random order than the one 
 <div class="chart" id="delete_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="delete_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="delete_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="delete_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_cycles_choices"></ul>
+
+<div class="chart" id="delete_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_branches_choices"></ul>
+
+<div class="chart" id="delete_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_instructions_choices"></ul>
+
+<div class="chart" id="delete_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_random_full_page_faults_choices"></ul>
+
+
 <!-- END_DELETE_RANDOM_FULL -->
 
 <!-- BEGIN_READ_RANDOM_F_AFTER_DELETE -->
@@ -501,6 +953,32 @@ different order which will lead to 50% hits and 50% misses.</p>
 <div class="chart" id="read_random_full_after_delete_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_random_full_after_delete_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_cache_misses_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_branch_misses_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_cycles_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_branches_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_instructions_choices"></ul>
+
+<div class="chart" id="read_random_full_after_delete_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_random_full_after_delete_page_faults_choices"></ul>
+
+
 <!-- END_READ_RANDOM_F_AFTER_DELETE -->
 
 <!-- BEGIN_ITERATION_RANDOM_FULL -->
@@ -516,6 +994,32 @@ We then use the hash map iterators to read all the key-value pairs.</p>
 <div class="chart" id="iteration_random_full_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="iteration_random_full_bopsnsec_choices"></ul>
+
+<div class="chart" id="iteration_random_full_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_cache_misses_choices"></ul>
+
+<div class="chart" id="iteration_random_full_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_branch_misses_choices"></ul>
+
+<div class="chart" id="iteration_random_full_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_cycles_choices"></ul>
+
+<div class="chart" id="iteration_random_full_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_branches_choices"></ul>
+
+<div class="chart" id="iteration_random_full_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_instructions_choices"></ul>
+
+<div class="chart" id="iteration_random_full_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration_random_full_page_faults_choices"></ul>
+
+
 <!-- END_ITERATION_RANDOM_FULL -->
 
 <!-- END_INTEGERS -->
@@ -553,6 +1057,32 @@ We then use the hash map iterators to read all the key-value pairs.</p>
 <div class="chart" id="insert_small_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_small_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_small_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_small_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_small_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_cycles_choices"></ul>
+
+<div class="chart" id="insert_small_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_branches_choices"></ul>
+
+<div class="chart" id="insert_small_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_instructions_choices"></ul>
+
+<div class="chart" id="insert_small_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_page_faults_choices"></ul>
+
+
 <!-- END_INSERT_SMALL_STRING -->
 
 
@@ -570,6 +1100,31 @@ We then use the hash map iterators to read all the key-value pairs.</p>
 <div class="chart" id="reinsert_small_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="reinsert_small_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_cache_misses_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_branch_misses_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_cycles_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_branches_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_instructions_choices"></ul>
+
+<div class="chart" id="reinsert_small_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_small_string_page_faults_choices"></ul>
+
 <!-- END_REINSERT__SMALL__STRING -->
 
 
@@ -590,6 +1145,31 @@ It provides a fair comparison even if the growth factor of each hash map is diff
 <div class="chart" id="insert_small_string_reserve_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_small_string_reserve_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_cycles_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_branches_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_instructions_choices"></ul>
+
+<div class="chart" id="insert_small_string_reserve_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_small_string_reserve_page_faults_choices"></ul>
+
 <!-- END_RESERVE_SMALL_STRING -->
 
 
@@ -606,6 +1186,31 @@ We then read each key-value pair in a different and random order than the one th
 <div class="chart" id="read_small_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_small_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_small_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_cache_misses_choices"></ul>
+
+<div class="chart" id="read_small_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_branch_misses_choices"></ul>
+
+<div class="chart" id="read_small_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_cycles_choices"></ul>
+
+<div class="chart" id="read_small_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_branches_choices"></ul>
+
+<div class="chart" id="read_small_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_instructions_choices"></ul>
+
+<div class="chart" id="read_small_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_page_faults_choices"></ul>
+
 <!-- END_READ_SMALL_STRING -->
 
 
@@ -623,6 +1228,31 @@ we try to search for these unknown elements in the hash map.</p>
 <div class="chart" id="read_miss_small_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_miss_small_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_cache_misses_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_branch_misses_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_cycles_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_branches_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_instructions_choices"></ul>
+
+<div class="chart" id="read_miss_small_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_small_string_page_faults_choices"></ul>
+
 <!-- END_READ_MISS_SMALL_STRING -->
 
 
@@ -639,6 +1269,31 @@ We then delete each key one by one in a different and random order than the one 
 <div class="chart" id="delete_small_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_small_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="delete_small_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_cache_misses_choices"></ul>
+
+<div class="chart" id="delete_small_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_branch_misses_choices"></ul>
+
+<div class="chart" id="delete_small_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_cycles_choices"></ul>
+
+<div class="chart" id="delete_small_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_branches_choices"></ul>
+
+<div class="chart" id="delete_small_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_instructions_choices"></ul>
+
+<div class="chart" id="delete_small_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_small_string_page_faults_choices"></ul>
+
 <!-- END_DELETE_SMALL_STRING -->
 
 <!-- BEGIN_READ_AFTER_DEL_SMALL_STRING -->
@@ -655,6 +1310,31 @@ different order which will lead to 50% hits and 50% misses.</p>
 <div class="chart" id="read_small_string_after_delete_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_small_string_after_delete_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_cache_misses_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_branch_misses_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_cycles_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_branches_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_instructions_choices"></ul>
+
+<div class="chart" id="read_small_string_after_delete_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_small_string_after_delete_page_faults_choices"></ul>
+
 <!-- END_READ_AFTER_DEL_SMALL_STRING -->
 
 <!-- END_SMALL_STRINGS -->
@@ -686,6 +1366,31 @@ different order which will lead to 50% hits and 50% misses.</p>
 <div class="chart" id="insert_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_cycles_choices"></ul>
+
+<div class="chart" id="insert_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_branches_choices"></ul>
+
+<div class="chart" id="insert_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_instructions_choices"></ul>
+
+<div class="chart" id="insert_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_page_faults_choices"></ul>
+
 <!-- END_INSERT_STRING -->
 
 
@@ -703,6 +1408,31 @@ different order which will lead to 50% hits and 50% misses.</p>
 <div class="chart" id="reinsert_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="reinsert_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="reinsert_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_cache_misses_choices"></ul>
+
+<div class="chart" id="reinsert_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_branch_misses_choices"></ul>
+
+<div class="chart" id="reinsert_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_cycles_choices"></ul>
+
+<div class="chart" id="reinsert_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_branches_choices"></ul>
+
+<div class="chart" id="reinsert_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_instructions_choices"></ul>
+
+<div class="chart" id="reinsert_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="reinsert_string_page_faults_choices"></ul>
+
 <!-- END_REINSERT__STRING -->
 
 
@@ -723,6 +1453,31 @@ It provides a fair comparison even if the growth factor of each hash map is diff
 <div class="chart" id="insert_string_reserve_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="insert_string_reserve_bopsnsec_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_cache_misses_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_branch_misses_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_cycles_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_branches_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_instructions_choices"></ul>
+
+<div class="chart" id="insert_string_reserve_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insert_string_reserve_page_faults_choices"></ul>
+
 <!-- END_RESERVE_STRING -->
 
 
@@ -739,6 +1494,31 @@ We then read each key-value pair in a different and random order than the one th
 <div class="chart" id="read_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_cache_misses_choices"></ul>
+
+<div class="chart" id="read_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_branch_misses_choices"></ul>
+
+<div class="chart" id="read_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_cycles_choices"></ul>
+
+<div class="chart" id="read_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_branches_choices"></ul>
+
+<div class="chart" id="read_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_instructions_choices"></ul>
+
+<div class="chart" id="read_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_page_faults_choices"></ul>
+
 <!-- END_READ_STRING -->
 
 <!-- BEGIN_READ_MISS_STRING -->
@@ -755,6 +1535,31 @@ we try to search for these unknown elements in the hash map.</p>
 <div class="chart" id="read_miss_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_miss_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_miss_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_cache_misses_choices"></ul>
+
+<div class="chart" id="read_miss_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_branch_misses_choices"></ul>
+
+<div class="chart" id="read_miss_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_cycles_choices"></ul>
+
+<div class="chart" id="read_miss_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_branches_choices"></ul>
+
+<div class="chart" id="read_miss_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_instructions_choices"></ul>
+
+<div class="chart" id="read_miss_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_miss_string_page_faults_choices"></ul>
+
 <!-- END_READ_MISS_STRING -->
 
 
@@ -771,6 +1576,31 @@ We then delete each key one by one in a different and random order than the one 
 <div class="chart" id="delete_string_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_string_bopsnsec_choices"></ul>
+
+<div class="chart" id="delete_string_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_cache_misses_choices"></ul>
+
+<div class="chart" id="delete_string_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_branch_misses_choices"></ul>
+
+<div class="chart" id="delete_string_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_cycles_choices"></ul>
+
+<div class="chart" id="delete_string_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_branches_choices"></ul>
+
+<div class="chart" id="delete_string_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_instructions_choices"></ul>
+
+<div class="chart" id="delete_string_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete_string_page_faults_choices"></ul>
+
 <!-- END_DELETE_STRING -->
 
 <!-- BEGIN_READ_AFTER_DEL_STRING -->
@@ -786,6 +1616,31 @@ We then try to read all the original values in a different order which will lead
 <div class="chart" id="read_string_after_delete_bopsnsec"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="read_string_after_delete_bopsnsec_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_cache_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_cache_misses_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_branch_misses"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_branch_misses_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_cycles"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_cycles_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_branches"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_branches_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_instructions"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_instructions_choices"></ul>
+
+<div class="chart" id="read_string_after_delete_page_faults"></div>
+<div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="read_string_after_delete_page_faults_choices"></ul>
+
 <!-- END_READ_AFTER_DEL_STRING -->
 
 <!-- END_STRINGS -->

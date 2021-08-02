@@ -40,6 +40,9 @@ program_slugs = [
     'cuckoohash_map'
 ]
 
+#tests = ["insert_random_shuffle_range","reinsert_random_shuffle_range","read_random_shuffle_range","insert_random_full","reinsert_random_full","insert_random_full_reserve","read_random_full","read_miss_random_full","read_random_full_after_delete","interation_random_full","delete_random_full","insert_random_full","insert_random_full_reserve","insert_small_string","reinsert_small_string","insert_small_string_reserve","read_small_string","read_miss_small_string","read_small_string_after_delete","delete_small_string","insert_small_string","insert_small_string_reserve","insert_string","reinsert_string","insert_string_reserve","read_string","read_miss_string","read_string_after_delete","delete_string"]
+#charts = ["cache_misses","branch_misses","cycles","branches","instructions","page_faults"]
+
 # hashmap which will be shown (checkbox checked),
 # by default all hashmaps are enabled.
 #default_programs_show = [
@@ -60,7 +63,8 @@ by_benchtype = {}
 for line in lines:
     if len(line) == 0:
         next
-    benchtype, nkeys, program, load_factor, nbytes, runtime = line.split(',')
+    values = line.split(',')
+    benchtype, nkeys, program, load_factor, nbytes, runtime = values[:6]
     nkeys = int(nkeys)
     nbytes = float(nbytes) / nkeys # bytes per (key,value) pair
     runtime = float(runtime) * 1000000000 / nkeys # microseconds per operation
@@ -72,6 +76,15 @@ for line in lines:
         if benchtype in ('insert_random_shuffle_range', 'insert_random_full', 'insert_small_string', 'insert_string',
                          'insert_random_full_reserve', 'insert_small_string_reserve', 'insert_string_reserve'):
             by_benchtype.setdefault("%s_memory"  % benchtype, {}).setdefault(program, []).append([nkeys, nbytes, load_factor])
+        if len(values)>6:
+            #print( values, file=sys.stderr )
+            cache_misses,branch_misses,cycles,branches,instructions,page_faults = [ float(val) for val in values[6:] ]
+            by_benchtype.setdefault("%s_cache_misses" % benchtype, {}).setdefault(program, []).append([nkeys, cache_misses, load_factor])
+            by_benchtype.setdefault("%s_branch_misses" % benchtype, {}).setdefault(program, []).append([nkeys, branch_misses, load_factor])
+            by_benchtype.setdefault("%s_cycles" % benchtype, {}).setdefault(program, []).append([nkeys, cycles, load_factor])
+            by_benchtype.setdefault("%s_branches" % benchtype, {}).setdefault(program, []).append([nkeys, branches, load_factor])
+            by_benchtype.setdefault("%s_instructions" % benchtype, {}).setdefault(program, []).append([nkeys, instructions, load_factor])
+            by_benchtype.setdefault("%s_page_faults" % benchtype, {}).setdefault(program, []).append([nkeys, 1./page_faults, load_factor])
 
 chart_data = {}
 existing_programs = {}
@@ -85,7 +98,7 @@ for i, (benchtype, programs) in enumerate(by_benchtype.items()):
 
         existing_programs[program] = program
         if "default_programs_show" not in dir() or (program in default_programs_show):
-            real_default_programs_show.add(program);
+            real_default_programs_show.add(program)
         data = programs[program]
         chart_data[benchtype].append({
             'program': program,

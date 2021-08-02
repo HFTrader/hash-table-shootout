@@ -15,14 +15,16 @@ for line in open("apps.txt"):
     if line:
         programs.append(line)
 
-minkeys  =  2*100*1000
-maxkeys  = 30*100*1000
+minkeys  =     200*1000
+maxkeys  = 30*1000*1000
 #interval =  2*100*1000
-step_percent =  30 # you may use this variable instead of "interval" for exponetial step
-best_out_of = 5
+step_percent =  20 # you may use this variable instead of "interval" for exponetial step
+best_out_of = 1
 
 ######################################################################
-outfile = open('output', 'w')
+mypid = os.getpid()
+filename = 'output-%d'% ( mypid, )
+outfile = open(filename, 'w')
 
 apps_env = os.environ.get('APPS', None)
 if apps_env:
@@ -86,12 +88,28 @@ for nkeys in points:
 
             for attempt in range(best_out_of):
                 try:
-                    output = subprocess.check_output(['./build/' + program, str(nkeys), benchtype], text=True, stderr=subprocess.STDOUT)
-                    words = output.strip().split()
-                    
+                    #output = subprocess.check_output(['./build/' + program, str(nkeys), benchtype], text=True )
+                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults"
+                    perf_prefix = ['perf','stat','-x',',','-e', events ] 
+                    command_args = perf_prefix + [ './build/' + program, str(nkeys), benchtype]
+                    result = subprocess.run( command_args, capture_output=True )
+                    if result.returncode != 0:
+                        continue
+
+                    output = result.stdout.decode('utf8').split('\n')
+                    words = output[0].strip().split()
                     runtime_seconds = float(words[0])
                     memory_usage_bytes = int(words[1])
                     load_factor = float(words[2])
+
+                    statvalues = {}
+                    for line in result.stderr.decode('utf8').strip().split('\n'):
+                        stats = line.split(',')
+                        if len(stats)>=3:
+                            key = str(stats[2])
+                            value = float(stats[0])/nkeys
+                            statvalues[key] = value 
+                    
                 except KeyboardInterrupt as e:
                     sys.exit(130);
                 except subprocess.CalledProcessError as e:
@@ -103,8 +121,16 @@ for nkeys in points:
                     print(e.stdout, file=sys.stderr)
                     break
 
-                line = ','.join(map(str, [benchtype, nkeys, program, "%0.2f" % load_factor, 
-                                          memory_usage_bytes, "%0.6f" % runtime_seconds]))
+                allstats = [benchtype, nkeys, program, "%0.2f" % load_factor,
+                                memory_usage_bytes, "%0.6f" % runtime_seconds ]
+                for event_name in events.split(','):
+                    value = statvalues.get(event_name)
+                    if value: 
+                        allstats.append( "%0.3f" % (value,) )
+                    else:
+                        allstats.append( "NaN" )
+                line = ','.join(map(str, allstats  ))
+                #print( line )
 
                 if runtime_seconds < fastest_attempt:
                     fastest_attempt = runtime_seconds
@@ -112,9 +138,9 @@ for nkeys in points:
 
             if fastest_attempt != 1000000:
                 print(fastest_attempt_data, file=outfile)
-                print(fastest_attempt_data)
+                #print(fastest_attempt_data)
 
         # Print blank line
         if fastest_attempt != 1000000:
             print(file=outfile)
-            print()
+            #print()

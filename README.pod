@@ -31,7 +31,10 @@ Your charts are now in charts.html.
  Written by Nick Welch in 2010.
  Forked by Tessil in 2016.
  Forked by Aleksey Cheusov in 2020.
+ Forked by Henrique Bucher in 2021.
  No copyright.  This work is dedicated to the public domain.
  For full details, see http://creativecommons.org/publicdomain/zero/1.0/
 
 =cut
+
+L< Buy me a coffee | https://ko-fi.com/Z8Z85JMPK >

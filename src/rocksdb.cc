@@ -5,8 +5,9 @@
 #include <rocksdb/slice.h>
 #include <rocksdb/options.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-static std::string kDBPath = "/tmp/str_rocksdb";
+static std::string kDBPath = "/tmp/str_rocksdb_" + std::to_string( ::getpid() );
 
 #undef SETUP_STR
 #define SETUP_STR \

@@ -110,17 +110,27 @@ std::vector<std::string> get_random_alphanum_strings(
 	return random_strings;
 }
 
+#include "PerfCounter.h"
+#include <linux/perf_event.h>
 class measurements {
  public:	
  measurements(): m_memory_usage_bytes_start(get_memory_usage_bytes()),
-		m_chrono_start(std::chrono::high_resolution_clock::now())
-					
+		m_chrono_start(std::chrono::high_resolution_clock::now()), 
+		cycles( PERF_COUNT_HW_CPU_CYCLES ),
+      	instructions( PERF_COUNT_HW_INSTRUCTIONS ),
+      	cachemisses( PERF_COUNT_HW_CACHE_MISSES ),
+      	branchmisses( PERF_COUNT_HW_BRANCH_MISSES )					
 	{
+		set_chrono_start();
 	}
 
 	void set_chrono_start()
 	{
 		m_chrono_start = std::chrono::high_resolution_clock::now();
+		cycles.start();
+		instructions.start();
+		cachemisses.start();
+		branchmisses.start();
 	}
 
 	~measurements() {
@@ -132,10 +142,12 @@ class measurements {
 		const std::size_t used_memory_bytes = (memory_usage_bytes_end > m_memory_usage_bytes_start)?
 			memory_usage_bytes_end - m_memory_usage_bytes_start:0;
 
-		std::cout << nb_seconds << " " << used_memory_bytes << " ";
+		std::cout << nb_seconds << " " << used_memory_bytes << " "; 
+		//<< " " << cycles.stop() << " " << instructions.stop() << " " << cachemisses.stop() << " " << branchmisses.stop() << " ";
 	}
 	
  private:	
+    PerfCounter cycles, instructions, cachemisses, branchmisses;
 	std::size_t m_memory_usage_bytes_start;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_chrono_start;
 };

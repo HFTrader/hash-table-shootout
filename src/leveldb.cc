@@ -3,8 +3,9 @@
 #include <iostream>
 #include <leveldb/db.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-static std::string kDBPath = "/tmp/str_leveldb";
+static std::string kDBPath = "/tmp/str_leveldb_" + std::to_string( ::getpid() );
 
 #undef SETUP_STR
 #define SETUP_STR \

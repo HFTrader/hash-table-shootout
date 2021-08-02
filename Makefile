@@ -110,5 +110,5 @@ $(OBJ_DIR) $(BUILD_DIR):
 clean:
 	rm -rf $(BUILD_DIR) $(OBJ_DIR)
 
-$(BUILD_DIR)/% : src/%.cc ${OBJS_${notdir $@}} src/template.cc
-	$(CXX) $(CXXFLAGS) ${CXXFLAGS_${notdir $@}} -o $@ $< ${OBJS_${notdir $@}} ${LDFLAGS} ${LDFLAGS_${notdir $@}}
+$(BUILD_DIR)/% : src/%.cc ${OBJS_${notdir $@}} src/template.cc src/PerfCounter.cpp
+	$(CXX) $(CXXFLAGS) ${CXXFLAGS_${notdir $@}} -o $@ $< src/PerfCounter.cpp ${OBJS_${notdir $@}} ${LDFLAGS} ${LDFLAGS_${notdir $@}}
