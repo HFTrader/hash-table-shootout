@@ -15,6 +15,12 @@ First, some prerequisites are:
      librocksdb
      libpython3
 
+     Ubuntu focal 20.04 LTS: 
+     sudo apt install -y build-essential libpython-all-dev pkg-config libboost-dev libsparsehash-dev \
+          qt5-default libjudy-dev libglib2.0-dev libleveldb-dev librocksdb-dev libkyotocabinet-dev \
+          linux-tools-common linux-tools-generic linux-tools-aws libtcmalloc-minimal4  
+     sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 /usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so
+
 Now, run:
 
     $ git submodule update --init --recursive

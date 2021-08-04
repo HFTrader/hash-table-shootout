@@ -16,7 +16,7 @@ for line in open("apps.txt"):
         programs.append(line)
 
 minkeys  =     200*1000
-maxkeys  = 30*1000*1000
+maxkeys  = 8*1000*1000
 #interval =  2*100*1000
 step_percent =  20 # you may use this variable instead of "interval" for exponetial step
 best_out_of = 1
@@ -88,7 +88,6 @@ for nkeys in points:
 
             for attempt in range(best_out_of):
                 try:
-                    #output = subprocess.check_output(['./build/' + program, str(nkeys), benchtype], text=True )
                     events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults"
                     perf_prefix = ['perf','stat','-x',',','-e', events ] 
                     command_args = perf_prefix + [ './build/' + program, str(nkeys), benchtype]
