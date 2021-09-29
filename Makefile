@@ -11,7 +11,7 @@ LDFLAGS_MALLOC ?= -ltcmalloc_minimal # often even better than jemalloc
 BUILD_DIR      ?= ./build
 OBJ_DIR        ?= ./obj
 
-PYTHON3_PC     ?= python3 # pkg-config ID for python3 development files
+PYTHON3_PC     ?= python3-embed # pkg-config ID for python3 development files
 
 ifndef APPS
 cmd := grep -v \\\# apps.txt

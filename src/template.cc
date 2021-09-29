@@ -119,7 +119,11 @@ class measurements {
 		cycles( PERF_COUNT_HW_CPU_CYCLES ),
       	instructions( PERF_COUNT_HW_INSTRUCTIONS ),
       	cachemisses( PERF_COUNT_HW_CACHE_MISSES ),
-      	branchmisses( PERF_COUNT_HW_BRANCH_MISSES )					
+      	branchmisses( PERF_COUNT_HW_BRANCH_MISSES ),
+		pagefaults( PERF_COUNT_SW_PAGE_FAULTS ),
+		pagefaultsmin( PERF_COUNT_SW_PAGE_FAULTS_MIN ),
+		pagefaultsmaj( PERF_COUNT_SW_PAGE_FAULTS_MAJ ),
+		branches( PERF_COUNT_HW_BRANCH_INSTRUCTIONS )				
 	{
 		set_chrono_start();
 	}
@@ -131,6 +135,10 @@ class measurements {
 		instructions.start();
 		cachemisses.start();
 		branchmisses.start();
+		pagefaults.start();
+		pagefaultsmin.start();
+		pagefaultsmaj.start();
+		branches.start();
 	}
 
 	~measurements() {
@@ -142,12 +150,14 @@ class measurements {
 		const std::size_t used_memory_bytes = (memory_usage_bytes_end > m_memory_usage_bytes_start)?
 			memory_usage_bytes_end - m_memory_usage_bytes_start:0;
 
-		std::cout << nb_seconds << " " << used_memory_bytes << " "; 
-		//<< " " << cycles.stop() << " " << instructions.stop() << " " << cachemisses.stop() << " " << branchmisses.stop() << " ";
+		std::cout << nb_seconds << " " << used_memory_bytes 
+		<< " " << cycles.stop() << " " << instructions.stop() << " " << cachemisses.stop() << " " 
+		<< branchmisses.stop() << " " << branches.stop() << " " 
+		<< pagefaults.stop() << " " << pagefaultsmin.stop() << " " << pagefaultsmaj.stop() << " " ;
 	}
 	
  private:	
-    PerfCounter cycles, instructions, cachemisses, branchmisses;
+    PerfCounter cycles, instructions, cachemisses, branchmisses, pagefaults, pagefaultsmin, pagefaultsmaj, branches;
 	std::size_t m_memory_usage_bytes_start;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_chrono_start;
 };

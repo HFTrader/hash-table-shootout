@@ -88,9 +88,9 @@ for nkeys in points:
 
             for attempt in range(best_out_of):
                 try:
-                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults"
-                    perf_prefix = ['perf','stat','-x',',','-e', events ] 
-                    command_args = perf_prefix + [ './build/' + program, str(nkeys), benchtype]
+                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults,page-faults-min,page-faults-maj"
+                    #perf_prefix = ['perf','stat','-x',',','-e', events ] 
+                    command_args =  [ './build/' + program, str(nkeys), benchtype]
                     result = subprocess.run( command_args, capture_output=True )
                     if result.returncode != 0:
                         continue
@@ -99,15 +99,24 @@ for nkeys in points:
                     words = output[0].strip().split()
                     runtime_seconds = float(words[0])
                     memory_usage_bytes = int(words[1])
-                    load_factor = float(words[2])
+                    cycles = float(words[2])/nkeys
+                    instructions = float(words[3])/nkeys
+                    cachemisses = float(words[4])/nkeys
+                    branchmisses = float(words[5])/nkeys
+                    branches = float(words[6])/nkeys 
+                    pagefaults = float(words[7])/nkeys
+                    pagefaultsmin = float(words[8])/nkeys
+                    pagefaultsmaj = float(words[9])/nkeys
+                    load_factor = float(words[10])
 
-                    statvalues = {}
-                    for line in result.stderr.decode('utf8').strip().split('\n'):
-                        stats = line.split(',')
-                        if len(stats)>=3:
-                            key = str(stats[2])
-                            value = float(stats[0])/nkeys
-                            statvalues[key] = value 
+                    statvalues = {'cache-misses':cachemisses,'branch-misses':branchmisses,'cycles':cycles,'instructions':instructions,
+                    'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches }
+                    #for line in result.stderr.decode('utf8').strip().split('\n'):
+                    #    stats = line.split(',')
+                    #    if len(stats)>=3:
+                    #        key = str(stats[2])
+                    #        value = float(stats[0])/nkeys
+                    #        statvalues[key] = value 
                     
                 except KeyboardInterrupt as e:
                     sys.exit(130);
@@ -123,8 +132,8 @@ for nkeys in points:
                 allstats = [benchtype, nkeys, program, "%0.2f" % load_factor,
                                 memory_usage_bytes, "%0.6f" % runtime_seconds ]
                 for event_name in events.split(','):
-                    value = statvalues.get(event_name)
-                    if value: 
+                    if event_name in statvalues: 
+                        value = statvalues[event_name]
                         allstats.append( "%0.3f" % (value,) )
                     else:
                         allstats.append( "NaN" )
