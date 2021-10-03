@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4  
+sudo apt install -y libboost-dev libsparsehash-dev qt5-default  libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
+ARCH=$(uname -m)-linux-gnu
+if [ ! -f /usr/lib/$ARCH/libtcmalloc_minimal.so ]; then
+	sudo ln -s /usr/lib/$ARCH/libtcmalloc_minimal.so.4 /usr/lib/$ARCH/libtcmalloc_minimal.so
+fi
+sudo bash -c "echo off > /sys/devices/system/cpu/smt/control"
+echo Hyperthreading is now $(cat /sys/devices/system/cpu/smt/control)
+
+

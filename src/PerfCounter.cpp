@@ -45,11 +45,10 @@ bool PerfCounter::init( int event, int group ) {
     memset(&pe, 0, sizeof(struct perf_event_attr));
     pe.type = PERF_TYPE_HARDWARE;
     pe.size = sizeof(struct perf_event_attr);
-    pe.config = event; //PERF_COUNT_HW_INSTRUCTIONS;
+    pe.config = event; 
     pe.disabled = 1;
     pe.exclude_kernel = 1;
     pe.exclude_hv = 1;
-    //pe.read_format = PERF_FORMAT_GROUP | PERF_FORMAT_ID;
 
     int pid = getpid();
     int fd = perf_event_open(&pe, pid, -1, group, 0);

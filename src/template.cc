@@ -123,7 +123,9 @@ class measurements {
 		pagefaults( PERF_COUNT_SW_PAGE_FAULTS ),
 		pagefaultsmin( PERF_COUNT_SW_PAGE_FAULTS_MIN ),
 		pagefaultsmaj( PERF_COUNT_SW_PAGE_FAULTS_MAJ ),
-		branches( PERF_COUNT_HW_BRANCH_INSTRUCTIONS )				
+		branches( PERF_COUNT_HW_BRANCH_INSTRUCTIONS ),
+		stalledfront( PERF_COUNT_HW_STALLED_CYCLES_FRONTEND ),
+		stalledback( PERF_COUNT_HW_STALLED_CYCLES_BACKEND )				
 	{
 		set_chrono_start();
 	}
@@ -139,6 +141,8 @@ class measurements {
 		pagefaultsmin.start();
 		pagefaultsmaj.start();
 		branches.start();
+		stalledfront.start();
+		stalledback.start();
 	}
 
 	~measurements() {
@@ -153,11 +157,14 @@ class measurements {
 		std::cout << nb_seconds << " " << used_memory_bytes 
 		<< " " << cycles.stop() << " " << instructions.stop() << " " << cachemisses.stop() << " " 
 		<< branchmisses.stop() << " " << branches.stop() << " " 
-		<< pagefaults.stop() << " " << pagefaultsmin.stop() << " " << pagefaultsmaj.stop() << " " ;
+		<< pagefaults.stop() << " " << pagefaultsmin.stop() << " " << pagefaultsmaj.stop() << " " 
+		<< stalledfront.stop() << " " << stalledback.stop() << " ";
 	}
 	
  private:	
-    PerfCounter cycles, instructions, cachemisses, branchmisses, pagefaults, pagefaultsmin, pagefaultsmaj, branches;
+    PerfCounter cycles, instructions, cachemisses, branchmisses;
+	PerfCounter pagefaults, pagefaultsmin, pagefaultsmaj, branches;
+	PerfCounter stalledfront, stalledback;
 	std::size_t m_memory_usage_bytes_start;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_chrono_start;
 };

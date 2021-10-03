@@ -88,7 +88,7 @@ for nkeys in points:
 
             for attempt in range(best_out_of):
                 try:
-                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults,page-faults-min,page-faults-maj"
+                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults,page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend"
                     #perf_prefix = ['perf','stat','-x',',','-e', events ] 
                     command_args =  [ './build/' + program, str(nkeys), benchtype]
                     result = subprocess.run( command_args, capture_output=True )
@@ -107,16 +107,18 @@ for nkeys in points:
                     pagefaults = float(words[7])/nkeys
                     pagefaultsmin = float(words[8])/nkeys
                     pagefaultsmaj = float(words[9])/nkeys
-                    load_factor = float(words[10])
+                    if len(words)==13:
+                        stalledfront = float(words[10])/nkeys
+                        stalledback = float(words[11])/nkeys
+                        load_factor = float(words[12])
+                    else:
+                        stalledfront = 0
+                        stalledback = 0
+                        load_factor = float(words[10])
 
                     statvalues = {'cache-misses':cachemisses,'branch-misses':branchmisses,'cycles':cycles,'instructions':instructions,
-                    'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches }
-                    #for line in result.stderr.decode('utf8').strip().split('\n'):
-                    #    stats = line.split(',')
-                    #    if len(stats)>=3:
-                    #        key = str(stats[2])
-                    #        value = float(stats[0])/nkeys
-                    #        statvalues[key] = value 
+                    'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches,
+                    'stalled-cycles-frontend':stalledfront, 'stalled-cycles-backend':stalledback }
                     
                 except KeyboardInterrupt as e:
                     sys.exit(130);
