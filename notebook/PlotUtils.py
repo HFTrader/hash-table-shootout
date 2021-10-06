@@ -6,19 +6,19 @@ import matplotlib.pyplot as plt
 fontsize = 10
 dpi = 100
 
-def printset( message, setorarray, maxlen=100 ):
+def printset( message, setorarray, maxlen=80, separator="," ):
     lines = []
     vals = []
     for name in setorarray:
         newvals = vals + [name,]
-        newstr = " ".join(newvals)
+        newstr = separator.join(newvals)
         if len(newstr)>maxlen:
-            lines.append( " ".join(vals) )
+            lines.append( separator.join(vals) )
             vals = [name]
         else:
             vals = newvals
     if len(vals)>0:
-        lines.append( " ".join(vals) )
+        lines.append( separator.join(vals) )
     print( message + ":" + "\n\t" + "\n\t".join( lines ) )
 
 def load_data_file( filename ):
@@ -193,7 +193,7 @@ def plot_tests( results, metrics, containers, operations, columns = None ):
             fig.savefig( filename, dpi=dpi )
             plt.close()
 
-def plot_containers( results, metrics, containers, operations, columns = None ):
+def plot_containers( results, metrics, containers, operations, columns = None, same_y = False ):
 
     resultnames = results.keys()
     setname = "-".join(resultnames)
@@ -224,11 +224,13 @@ def plot_containers( results, metrics, containers, operations, columns = None ):
 
             # Create three columns
             axs = fig.subplots( rows, columns )
-            axs = axs.flat
-
-            # Remove extra plots for which we have no data
-            for ax in axs[numcontainers:]:
-                ax.remove()
+            if rows*columns==1:
+                axs = [axs,]
+            else:
+                axs = axs.flat
+                # Remove extra plots for which we have no data
+                for ax in axs[numcontainers:]:
+                    ax.remove()
 
             # Compute maximum values for each container
             xydata = []
@@ -253,7 +255,8 @@ def plot_containers( results, metrics, containers, operations, columns = None ):
                 for testname,x,y in series:
                     ax.plot( x, y, markersize=2, label=testname )
                 ax.set_xscale( 'log')
-                ax.set_ylim( [miny,maxy] )
+                if same_y:
+                    ax.set_ylim( [miny,maxy] )
                 ax.grid( True )
                 ax.legend()
 
