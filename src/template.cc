@@ -132,7 +132,6 @@ class measurements {
 
 	void set_chrono_start()
 	{
-		m_chrono_start = std::chrono::high_resolution_clock::now();
 		cycles.start();
 		instructions.start();
 		cachemisses.start();
@@ -143,6 +142,7 @@ class measurements {
 		branches.start();
 		stalledfront.start();
 		stalledback.start();
+		m_chrono_start = std::chrono::high_resolution_clock::now();
 	}
 
 	~measurements() {

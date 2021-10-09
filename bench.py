@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import sys, os, subprocess, re
-from select import select
+import select
 from subprocess import Popen, PIPE
+import time
 
 # samples of use:
 #  ./bench.py
@@ -26,6 +27,7 @@ timeout = 0
 mypid = os.getpid()
 filename = 'output-%d'% ( mypid, )
 outfile = open(filename, 'w')
+#print( "Output will be written to file", filename, file=sys.stderr )
 
 benchtypes = [
     'insert_random_shuffle_range',
@@ -65,32 +67,46 @@ while keys <= maxkeys:
     points.append(keys)
     keys = int(max(keys + 1, keys * (100 + step_percent) / 100))
 
-timeout = 0.1
+timeout = 10
 for nkeys in points:
     for benchtype in benchtypes:
         for program in programs:
                 try:
-                    events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults,page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend"
                     command =  [ './build/' + program, str(nkeys), benchtype]
-                    procs = list( [ Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE) for np in range(numprocs) ] )
+                    poll = select.poll()
+                    sockets = {}
+                    for np in range(numprocs):
+                        #print( "Running", " ".join(command) , file=sys.stderr )
+                        p = Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                        for socket in (p.stdout,p.stderr):
+                            poll.register( socket, select.POLLIN | select.POLLERR | select.POLLHUP )
+                        sockets.update( { p.stdout.fileno(): (True,p.stdout) } )
+                        sockets.update( { p.stderr.fileno(): (False,p.stderr) } )
                     lines = []
-                    while procs:
-                        for p in procs:
-                            if p.poll() is not None:
-                                data = p.stdout.readline()
-                                lines.append( data )
+                    done_count = 0
+                    while done_count < numprocs:
+                        events = poll.poll()
+                        for fd, mask in events:
+                            if fd not in sockets:
+                                continue
+                            is_stdout,sock = sockets.get(fd)
+                            if mask & select.POLLIN:
+                                data = sock.readline()
+                                if is_stdout:
+                                    lines.append( data )
+                            if mask & select.POLLHUP:
+                                data = sock.readline()
+                                if is_stdout:
+                                    lines.append( data )
                                 #print( data, file = sys.stderr )
-                                #print( "   Process finished" )
-                                p.stdout.close()
-                                procs.remove(p)
-                        outlist = [p.stdout for p in procs]
-                        errlist = [p.stderr for p in procs]
-                        rlist = select( outlist + errlist, [], [], timeout )[0]
-                        for f in rlist:
-                            data = f.readline()
-                            #print( data, file = sys.stderr )
-                            lines.append( data )
-                    #print( "Batch", nkeys, benchtype, program, " is done " )
+                                sock.close()
+                                #poll.unregister( sock.fileno() )
+                                del sockets[fd]
+                                if is_stdout:
+                                    #print( "   Process finished", file = sys.stderr )
+                                    done_count += 1
+
+                    #print( "Batch", nkeys, benchtype, program, " is done ", file=sys.stderr )
                     for output in lines:
                             words = output.strip().split()
                             if len(words)!=13:
@@ -112,13 +128,15 @@ for nkeys in points:
                                 load_factor = float(words[12])
 
                             except Exception as e:
-                                print( e, file=stderr )
+                                print( e, file=sys.stderr )
 
                             statvalues = {'cache-misses':cachemisses,'branch-misses':branchmisses,'cycles':cycles,'instructions':instructions,
                                           'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches,
                                           'stalled-cycles-frontend':stalledfront, 'stalled-cycles-backend':stalledback }
                             allstats = [benchtype, nkeys, program, "%0.2f" % load_factor,
                                 memory_usage_bytes, "%0.9f" % runtime_seconds ]
+                            events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults," + \
+                                "page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend"
                             for event_name in events.split(','):
                                 if event_name in statvalues:
                                     value = statvalues[event_name]
@@ -133,6 +151,7 @@ for nkeys in points:
                     sys.exit(130);
                 except subprocess.CalledProcessError as e:
                     if e.returncode == 71: # unknown test type for program?
+                        print(e)
                         continue # silently ignore this case
                     print("Error with %s" % str(['./build/' + program, str(nkeys), benchtype]), file=sys.stderr)
                     print("Exit status is %d" % e.returncode, file=sys.stderr)

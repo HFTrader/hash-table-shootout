@@ -4,8 +4,19 @@
 #include <leveldb/db.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
 
 static std::string kDBPath = "/tmp/str_leveldb_" + std::to_string( ::getpid() );
+
+struct FileEraser {
+    std::string filename;
+    FileEraser( const std::string& fn ) : filename(fn) {}
+    ~FileEraser() {
+        fs::remove_all( fs::path( filename ) );
+    }
+};
 
 #undef SETUP_STR
 #define SETUP_STR \
@@ -13,7 +24,7 @@ static std::string kDBPath = "/tmp/str_leveldb_" + std::to_string( ::getpid() );
 	static leveldb::Options options;				\
 	options.create_if_missing = true;				\
 	std::string rem_leveldb_cmd = std::string("rm -rf ") + kDBPath;		\
-	system(rem_leveldb_cmd.c_str());									\
+    FileEraser feraser( kDBPath );  \
 	leveldb::Status status = leveldb::DB::Open(options, kDBPath, &str_db);	\
 	if (!status.ok()) {													\
 		std::cerr << "Open() failed\n";									\
@@ -64,6 +75,6 @@ static std::string kDBPath = "/tmp/str_leveldb_" + std::to_string( ::getpid() );
 #define LOAD_FACTOR_STR_HASH(hash) 0.0f
 
 #undef CLEAR_STR
-#define CLEAR_STR delete str_db; system(rem_leveldb_cmd.c_str());
+#define CLEAR_STR delete str_db;
 
 #include "template.cc"

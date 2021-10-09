@@ -6,8 +6,19 @@
 #include <rocksdb/options.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
 
 static std::string kDBPath = "/tmp/str_rocksdb_" + std::to_string( ::getpid() );
+
+struct FileEraser {
+    std::string filename;
+    FileEraser( const std::string& fn ) : filename(fn) {}
+    ~FileEraser() {
+        fs::remove_all( fs::path( filename ) );
+    }
+};
 
 #undef SETUP_STR
 #define SETUP_STR \
@@ -20,8 +31,7 @@ static std::string kDBPath = "/tmp/str_rocksdb_" + std::to_string( ::getpid() );
 	options.WAL_size_limit_MB = 0;										\
 	static rocksdb::WriteOptions write_options;							\
 	write_options.disableWAL = true;									\
-	std::string rem_rocksdb_cmd = std::string("rm -rf ") + kDBPath;		\
-	system(rem_rocksdb_cmd.c_str());									\
+	FileEraser feraser( kDBPath ); \
 	rocksdb::Status status = rocksdb::DB::Open(options, kDBPath, &str_db); \
 	if (!status.ok()) {													\
 		std::cerr << "Open() failed\n";									\
@@ -74,6 +84,6 @@ static std::string kDBPath = "/tmp/str_rocksdb_" + std::to_string( ::getpid() );
 #define LOAD_FACTOR_STR_HASH(hash) 0.0f
 
 #undef CLEAR_STR
-#define CLEAR_STR delete str_db; system(rem_rocksdb_cmd.c_str());
+#define CLEAR_STR delete str_db;
 
 #include "template.cc"

@@ -122,8 +122,8 @@ def plot_metrics( results, metrics, containers, operations, columns=None ):
     for container in containers:
         for operation in operations:
             fig = plt.figure(figsize=(15,8), constrained_layout = True )
-            fig.suptitle( "Set:%s  Container:%s  Test:%s" % (setname,container,operation), fontsize=14 )
-            axs = fig.subplots( rows, colums )
+            fig.suptitle( "Container:%s  Test:%s" % (container,operation), fontsize=14 )
+            axs = fig.subplots( rows, columns )
             axs = axs.flat
             for ax in axs[nummetrics:]:
                 ax.remove()

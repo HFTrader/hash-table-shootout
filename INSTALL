@@ -1,12 +1,23 @@
 #!/bin/bash
 
-sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4  
-sudo apt install -y libboost-dev libsparsehash-dev qt5-default  libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
+sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4
+sudo apt install -y libboost-dev libboost-filesystem-dev libsparsehash-dev qt5-default libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
+sudo apt install -y tuned tuned-utils tuned-utils-systemtap
+
+if [ ! -f $HOME/.tuned ]; then
+    sudo bash -c "date +'%Y%m%d' > $HOME/.tuned"
+    sudo reboot now
+fi
+if [ ! -f $HOME/.tuned2 ]; then
+    sudo tuned-adm profile throughput-performance
+    sudo tuned-adm active
+
+fi
 ARCH=$(uname -m)-linux-gnu
 if [ ! -f /usr/lib/$ARCH/libtcmalloc_minimal.so ]; then
-	sudo ln -s /usr/lib/$ARCH/libtcmalloc_minimal.so.4 /usr/lib/$ARCH/libtcmalloc_minimal.so
+	sudo bash -c "ln -s /usr/lib/$ARCH/libtcmalloc_minimal.so.4 /usr/lib/$ARCH/libtcmalloc_minimal.so"
 fi
-sudo bash -c "echo off > /sys/devices/system/cpu/smt/control"
-echo Hyperthreading is now $(cat /sys/devices/system/cpu/smt/control)
-
-
+if [ -f  /sys/devices/system/cpu/smt/control ]; then
+    sudo bash -c "echo off > /sys/devices/system/cpu/smt/control"
+    echo Hyperthreading is now $(cat /sys/devices/system/cpu/smt/control)
+fi
