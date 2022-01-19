@@ -8,6 +8,7 @@ folly_f14_vector_map
 python3_dict
 std_unordered_map
 std_map
+boost_flat_map
 boost_unordered_map
 google_sparse_hash_map
 google_dense_hash_map
