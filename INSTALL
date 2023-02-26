@@ -1,8 +1,16 @@
 #!/bin/bash
-
-sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4
-sudo apt install -y libboost-dev libboost-filesystem-dev libsparsehash-dev qt5-default libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
-sudo apt install -y tuned tuned-utils tuned-utils-systemtap
+source /etc/os-release
+if [ $ID == "Ubuntu" ]; then
+	if [ $VERSION_ID == "22.04" ]; then
+		sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4
+		sudo apt install -y libboost-dev libboost-filesystem-dev libsparsehash-dev qt5-default libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
+		sudo apt install -y tuned tuned-utils tuned-utils-systemtap
+	elif [ $VERSION_ID == "22.04" ]; then
+		sudo apt install -y build-essential python3-dev libpython3-all-dev libpython3-dev pkg-config libtcmalloc-minimal4
+		sudo apt install -y libboost-dev libboost-filesystem-dev libsparsehash-dev qtbase5-dev libjudy-dev libglib2.0-dev libkyotocabinet-dev librocksdb-dev libleveldb-dev
+		sudo apt install -y tuned tuned-utils tuned-utils-systemtap
+	fi
+fi
 
 if [ ! -f $HOME/.tuned ]; then
     sudo bash -c "date +'%Y%m%d' > $HOME/.tuned"
