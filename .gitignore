@@ -3,3 +3,4 @@ build
 output
 charts.html
 output-*
+perf.*
