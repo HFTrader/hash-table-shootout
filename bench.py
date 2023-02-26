@@ -20,7 +20,7 @@ for line in open("apps.txt"):
 
 minkeys  =         200
 maxkeys  = 2*1000*1000
-step_percent =  10 # you may use this variable instead of "interval" for exponetial step
+step_percent =  30 # you may use this variable instead of "interval" for exponetial step
 timeout = 0
 
 ######################################################################
@@ -109,7 +109,7 @@ for nkeys in points:
                     #print( "Batch", nkeys, benchtype, program, " is done ", file=sys.stderr )
                     for output in lines:
                             words = output.strip().split()
-                            if len(words)!=13:
+                            if len(words)!=18:
                                 continue
 
                             try:
@@ -125,22 +125,29 @@ for nkeys in points:
                                 pagefaultsmaj = float(words[9])/nkeys
                                 stalledfront = float(words[10])/nkeys
                                 stalledback = float(words[11])/nkeys
-                                load_factor = float(words[12])
+                                tlbmisses = float(words[12])/nkeys
+                                migrations = float(words[13])
+                                ctxswitches = float(words[14])
+                                cpuclock = float(words[15])/nkeys
+                                taskclock = float(words[16])/nkeys
+                                load_factor = float(words[17])
 
                             except Exception as e:
                                 print( e, file=sys.stderr )
 
                             statvalues = {'cache-misses':cachemisses,'branch-misses':branchmisses,'cycles':cycles,'instructions':instructions,
                                           'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches,
-                                          'stalled-cycles-frontend':stalledfront, 'stalled-cycles-backend':stalledback }
+                                          'stalled-cycles-frontend':stalledfront, 'stalled-cycles-backend':stalledback, 'tlbmisses':tlbmisses, 'migrations':migrations, 
+                                          'ctxswitches':ctxswitches,'cpuclock':cpuclock, 'taskclock':taskclock  }
                             allstats = [benchtype, nkeys, program, "%0.2f" % load_factor,
                                 memory_usage_bytes, "%0.9f" % runtime_seconds ]
                             events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults," + \
-                                "page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend"
+                                "page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend," + \
+                                "tlbmisses,migrations,ctxswitches,cpuclock,taskclock"
                             for event_name in events.split(','):
                                 if event_name in statvalues:
                                     value = statvalues[event_name]
-                                    allstats.append( "%0.3f" % (value,) )
+                                    allstats.append( "%0.6f" % (value,) )
                                 else:
                                     allstats.append( "NaN" )
                             line = ','.join(map(str, allstats ))
