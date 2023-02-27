@@ -1,6 +1,6 @@
 #include <inttypes.h>
 #include <string>
-#include <include/tsl/hopscotch_map.h>
+#include <tsl/hopscotch_map.h>
 
 typedef tsl::hopscotch_map<int64_t, int64_t, std::hash<int64_t>> hash_t;
 typedef tsl::hopscotch_map<std::string, int64_t, std::hash<std::string>> str_hash_t;
@@ -9,4 +9,3 @@ typedef tsl::hopscotch_map<std::string, int64_t, std::hash<std::string>> str_has
 #include "hash_map_str_base.h"
 
 #include "template.cc"
-
