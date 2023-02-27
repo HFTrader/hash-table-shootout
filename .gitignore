@@ -4,3 +4,4 @@ output
 charts.html
 output-*
 perf.*
+nohup.out

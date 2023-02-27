@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.12 )
 
-set( CMAKE_CXX_FLAGS_RELEASE_INIT -O3 -march=native -DNDEBUG CACHE STRING "" )
+set( CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -march=native -DNDEBUG" CACHE STRING "" )
 project( hash-map-shootout )
 
 set( CMAKE_CXX_STANDARD 17 )
@@ -92,9 +92,14 @@ ExternalProject_Add( google-sparsehash
     PREFIX _deps
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix <SOURCE_DIR>/install
+    #BUILD_COMMAND "make -j"
+    #INSTALL_COMMAND "make install"
+    BUILD_IN_SOURCE 1
 )
 ExternalProject_Get_Property( google-sparsehash source_dir)
-add_library( google_sparsehash INTERFACE IMPORTED GLOBAL)
+add_library( google_sparsehash INTERFACE IMPORTED GLOBAL )
+add_dependencies( google_sparsehash google-sparsehash )
+file( MAKE_DIRECTORY ${source_dir}/install/include ) # HACK
 target_include_directories( google_sparsehash INTERFACE ${source_dir}/install/include )
 
 #############################################################################
