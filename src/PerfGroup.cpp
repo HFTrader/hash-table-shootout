@@ -41,10 +41,10 @@ static bool translate(const char *events[], perf_event_attr_t *evds, size_t size
         int ret = pfm_get_os_event_encoding(events[j], PFM_PLM0 | PFM_PLM3, PFM_OS_PERF_EVENT_EXT, &arg);
         if (ret != PFM_SUCCESS)
         {
-            std::cerr << "PerfGroup::translate event " << events[j] << " " << pfm_strerror(ret) << std::endl;
+            std::cerr << "PerfGroup: could not translate event [" << events[j] << "] " << pfm_strerror(ret) << std::endl;
             return false;
         }
-        std::cerr << "Event:" << events[j] << " name: [" << fstr << "] type:" << attr.type << " size:" << attr.size << " config:" << attr.config << std::endl;
+        // std::cerr << "Event:" << events[j] << " name: [" << fstr << "] type:" << attr.type << " size:" << attr.size << " config:" << attr.config << std::endl;
         ::free(fstr);
     }
     return true;
@@ -94,7 +94,7 @@ static bool init(std::vector<perf_event_attr_t> &evds, std::vector<PerfGroup::De
         }
         if ((pea.type == PERF_TYPE_HARDWARE) || (pea.type == PERF_TYPE_HW_CACHE))
         {
-            if (++counter >= 7000)
+            if (++counter >= 3)
             {
                 counter = 0;
                 leader = -1;
@@ -229,7 +229,7 @@ void PerfGroup::read()
         {
             uint64_t id = msg->values[i].id;
             uint64_t value = msg->values[i].value;
-            std::cerr << "Read lead:" << lead << " index " << id << "/" << msg->nr << " value " << value << std::endl;
+            // std::cerr << "Read lead:" << lead << " index " << id << "/" << msg->nr << " value " << value << std::endl;
             auto it = std::lower_bound(_ids.begin(), _ids.end(), id, [](const Descriptor &d, size_t id)
                                        { return d.id < id; });
             if (it != _ids.end())
