@@ -8,6 +8,12 @@ set( CMAKE_CXX_STANDARD 17 )
 #############################################################################
 # System installed sources
 #############################################################################
+find_library( LIBTCMALLOC NAMES tcmalloc_minimal libtcmalloc_minimal.so.4 )
+if ( LIBTCMALLOC-NOTFOUND ) 
+message( FATAL_ERROR "libtcmalloc not found ")
+else()
+link_libraries( ${LIBTCMALLOC} )
+endif()
 find_package(Python3 REQUIRED COMPONENTS Development )
 find_package(Boost COMPONENTS container filesystem )
 find_package(Qt5 REQUIRED COMPONENTS Core)
@@ -124,7 +130,7 @@ target_include_directories( google_sparsehash INTERFACE ${source_dir}/install/in
 # Our binaries
 #############################################################################
 
-add_library( perfcounter STATIC src/PerfCounter.cpp src/PerfGroup.cpp )
+add_library( perfcounter STATIC src/PerfGroup.cpp )
 target_link_libraries( perfcounter PRIVATE libpfm )
 
 add_executable( testPerfGroup src/testPerfGroup.cpp )
