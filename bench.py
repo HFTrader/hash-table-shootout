@@ -5,6 +5,42 @@ import select
 from subprocess import Popen, PIPE
 import time
 
+def execute( command, numprocs ): 
+    #print( command )
+    poll = select.poll()
+    sockets = {}
+    for np in range(numprocs):
+        #print( "Running", " ".join(command) , file=sys.stderr )
+        p = Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        for socket in (p.stdout,p.stderr):
+            poll.register( socket, select.POLLIN | select.POLLERR | select.POLLHUP )
+        sockets.update( { p.stdout.fileno(): (True,p.stdout) } )
+        sockets.update( { p.stderr.fileno(): (False,p.stderr) } )
+    lines = []
+    done_count = 0
+    while done_count < numprocs:
+        events = poll.poll()
+        for fd, mask in events:
+            if fd not in sockets:
+                continue
+            is_stdout,sock = sockets.get(fd)
+            if mask & (select.POLLIN|select.POLLHUP):
+                data = sock.readline().decode('utf-8')
+                if is_stdout:
+                    lines.append( data )
+            if mask & select.POLLHUP:
+                sock.close()
+                del sockets[fd]
+                if is_stdout:
+                    done_count += 1
+    return lines
+
+metrics = []
+for line in open( "counters.txt" ):
+    line = line.strip()
+    if line:
+        metrics.append( line  )
+print( metrics )
 # samples of use:
 #  ./bench.py
 #  ./bench.py insert_random_full insert_random_full_reserve
@@ -72,90 +108,34 @@ for nkeys in points:
     for benchtype in benchtypes:
         for program in programs:
                 try:
-                    command =  [ './build/' + program, str(nkeys), benchtype]
-                    poll = select.poll()
-                    sockets = {}
-                    for np in range(numprocs):
-                        #print( "Running", " ".join(command) , file=sys.stderr )
-                        p = Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                        for socket in (p.stdout,p.stderr):
-                            poll.register( socket, select.POLLIN | select.POLLERR | select.POLLHUP )
-                        sockets.update( { p.stdout.fileno(): (True,p.stdout) } )
-                        sockets.update( { p.stderr.fileno(): (False,p.stderr) } )
-                    lines = []
-                    done_count = 0
-                    while done_count < numprocs:
-                        events = poll.poll()
-                        for fd, mask in events:
-                            if fd not in sockets:
-                                continue
-                            is_stdout,sock = sockets.get(fd)
-                            if mask & select.POLLIN:
-                                data = sock.readline()
-                                if is_stdout:
-                                    lines.append( data )
-                            if mask & select.POLLHUP:
-                                data = sock.readline()
-                                if is_stdout:
-                                    lines.append( data )
-                                #print( data, file = sys.stderr )
-                                sock.close()
-                                #poll.unregister( sock.fileno() )
-                                del sockets[fd]
-                                if is_stdout:
-                                    #print( "   Process finished", file = sys.stderr )
-                                    done_count += 1
-
-                    #print( "Batch", nkeys, benchtype, program, " is done ", file=sys.stderr )
+                    command =  [ './build/' + program, str(nkeys), benchtype, "counters.txt"]
+                    lines = execute( command, numprocs )
                     for output in lines:
                             words = output.strip().split()
-                            if len(words)!=18:
+                            if len(words)!=len(metrics)+3:
                                 continue
-
                             try:
+                                # fixed fields
                                 runtime_seconds = float(words[0])
                                 memory_usage_bytes = int(words[1])
-                                cycles = float(words[2])/nkeys
-                                instructions = float(words[3])/nkeys
-                                cachemisses = float(words[4])/nkeys
-                                branchmisses = float(words[5])/nkeys
-                                branches = float(words[6])/nkeys
-                                pagefaults = float(words[7])/nkeys
-                                pagefaultsmin = float(words[8])/nkeys
-                                pagefaultsmaj = float(words[9])/nkeys
-                                stalledfront = float(words[10])/nkeys
-                                stalledback = float(words[11])/nkeys
-                                tlbmisses = float(words[12])/nkeys
-                                migrations = float(words[13])
-                                ctxswitches = float(words[14])
-                                cpuclock = float(words[15])/nkeys
-                                taskclock = float(words[16])/nkeys
-                                load_factor = float(words[17])
+                                load_factor = float(words[-1])
+                                # middle fields
+                                values = ["%g"%(float(valstr)/nkeys,) for valstr in words[2:-1]]
 
                             except Exception as e:
                                 print( e, file=sys.stderr )
+                                continue
 
-                            statvalues = {'cache-misses':cachemisses,'branch-misses':branchmisses,'cycles':cycles,'instructions':instructions,
-                                          'page-faults':pagefaults,'page-faults-min':pagefaultsmin, 'page-faults-maj': pagefaultsmaj, 'branches':branches,
-                                          'stalled-cycles-frontend':stalledfront, 'stalled-cycles-backend':stalledback, 'tlbmisses':tlbmisses, 'migrations':migrations, 
-                                          'ctxswitches':ctxswitches,'cpuclock':cpuclock, 'taskclock':taskclock  }
-                            allstats = [benchtype, nkeys, program, "%0.2f" % load_factor,
+                            stats = [benchtype, nkeys, program, "%0.2f" % load_factor,
                                 memory_usage_bytes, "%0.9f" % runtime_seconds ]
-                            events = "cache-misses,branch-misses,cycles,branches,instructions,page-faults," + \
-                                "page-faults-min,page-faults-maj,stalled-cycles-frontend,stalled-cycles-backend," + \
-                                "tlbmisses,migrations,ctxswitches,cpuclock,taskclock"
-                            for event_name in events.split(','):
-                                if event_name in statvalues:
-                                    value = statvalues[event_name]
-                                    allstats.append( "%0.6f" % (value,) )
-                                else:
-                                    allstats.append( "NaN" )
-                            line = ','.join(map(str, allstats ))
+                            stats.extend(values)
+                            line = ','.join(map(str, stats ))
                             print( line, file=outfile )
 
 
                 except KeyboardInterrupt as e:
-                    sys.exit(130);
+                    sys.exit(130)
+
                 except subprocess.CalledProcessError as e:
                     if e.returncode == 71: # unknown test type for program?
                         print(e)

@@ -26,12 +26,12 @@ static bool translate(const char *events[], perf_event_attr_t *evds, size_t size
     // std::cerr << "Translate: " << size << " items" << std::endl;
     for (size_t j = 0; j < size; ++j) {
         perf_event_attr_t &attr(evds[j]);
-        memset(&attr, 0, sizeof(attr));
-        char *fstr = nullptr;
+        // memset(&attr, 0, sizeof(attr));
+        //  char *fstr = nullptr;
         pfm_perf_encode_arg_t arg;
         memset(&arg, 0, sizeof(arg));
         arg.attr = &attr;
-        arg.fstr = &fstr;
+        // arg.fstr = &fstr;
         int ret = pfm_get_os_event_encoding(events[j], PFM_PLM0 | PFM_PLM3,
                                             PFM_OS_PERF_EVENT_EXT, &arg);
         if (ret != PFM_SUCCESS) {
@@ -41,14 +41,14 @@ static bool translate(const char *events[], perf_event_attr_t *evds, size_t size
         }
         // std::cerr << "Event:" << events[j] << " name: [" << fstr << "] type:" <<
         // attr.type << " size:" << attr.size << " config:" << attr.config << std::endl;
-        ::free(fstr);
+        //::free(fstr);
     }
     return true;
 }
 
 static bool init(std::vector<perf_event_attr_t> &evds,
                  std::vector<PerfGroup::Descriptor> &ids, std::vector<int> &leaders) {
-    pid_t pid = getpid();
+    pid_t pid = 0;  // getpid();
     int cpu = -1;
     int leader = -1;
     int flags = 0;
@@ -56,19 +56,27 @@ static bool init(std::vector<perf_event_attr_t> &evds,
     leaders.clear();
     for (size_t j = 0; j < evds.size(); ++j) {
         perf_event_attr_t &pea(evds[j]);
-        unsigned type = pea.type;
-        long long config = pea.config;
-        memset(&pea, 0, sizeof(pea));
-        pea.type = type;
-        pea.config = config;
+        pea.disabled = (leader < 0) ? 1 : 0;
+        pea.inherit = 1;
+        pea.pinned = (leader < 0) ? 1 : 0;
         pea.size = sizeof(perf_event_attr_t);
-        pea.disabled = 1;
         pea.exclude_kernel = 1;
+        pea.exclude_user = 0;
         pea.exclude_hv = 1;
         pea.read_format = PERF_FORMAT_GROUP | PERF_FORMAT_ID;
 
-        int fd = perf_event_open(&pea, pid, cpu, leader, flags);
+    retry:
+        int fd = -1;
+        static const int kNumberOfTries = 5;
+        for (int k = 0; k < kNumberOfTries; ++k) {
+            fd = perf_event_open(&pea, pid, cpu, leader, flags);
+            if (fd >= 0) break;
+        }
         if (fd < 0) {
+            if (leader >= 0) {
+                leader = -1;
+                goto retry;
+            }
             int err = errno;
             std::cerr << "PerfGroup::init  Index:" << j << " errno:" << err << " "
                       << strerror(err) << std::endl;
@@ -86,12 +94,6 @@ static bool init(std::vector<perf_event_attr_t> &evds,
                       << " errno:" << err << " " << strerror(err) << std::endl;
             return false;
         }
-        if ((pea.type == PERF_TYPE_HARDWARE) || (pea.type == PERF_TYPE_HW_CACHE)) {
-            if (++counter >= 3) {
-                counter = 0;
-                leader = -1;
-            }
-        }
 
         ids[j].fd = fd;
         ids[j].id = id;
@@ -102,7 +104,6 @@ static bool init(std::vector<perf_event_attr_t> &evds,
 
 bool PerfGroup::init(const std::vector<std::string> &events) {
     std::vector<perf_event_attr_t> evds(events.size());
-    memset(&evds[0], 0, sizeof(perf_event_attr_t) * evds.size());
     std::vector<const char *> names(events.size());
     for (size_t j = 0; j < events.size(); ++j) {
         names[j] = events[j].c_str();
