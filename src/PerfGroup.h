@@ -5,8 +5,7 @@
 
 // https://stackoverflow.com/questions/42088515/perf-event-open-how-to-monitoring-multiple-events
 
-struct PerfGroup
-{
+struct PerfGroup {
     static bool initialize();
 
     PerfGroup();
@@ -21,8 +20,7 @@ struct PerfGroup
     uint64_t operator[](const char *name) const;
     std::string name(size_t index) const;
 
-    struct Descriptor
-    {
+    struct Descriptor {
         std::string name;
         int fd;
         uint64_t id;
