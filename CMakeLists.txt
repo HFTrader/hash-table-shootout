@@ -13,6 +13,17 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(glib REQUIRED IMPORTED_TARGET glib-2.0)
 pkg_check_modules(kyotocabinet REQUIRED IMPORTED_TARGET kyotocabinet)
+find_library ( LIBPFM_LIBRARY_FILE NAMES libpfm.a libpfm.so )
+find_file( LIBPFM_INCLUDE_FILE NAMES perfmon/pfmlib.h )
+if ( LIBPFM_LIBRARY_FILE-NOTFOUND OR LIBPFM_INCLUDE_FILE-NOTFOUND )
+    set( LIBPFM-NOTFOUND ON )
+else()
+    cmake_path( GET LIBPFM_INCLUDE_FILE PARENT_PATH LIBPFM_INCLUDE_FILE )
+    cmake_path( GET LIBPFM_INCLUDE_FILE PARENT_PATH LIBPFM_INCLUDE_DIR )
+    add_library( libpfm INTERFACE IMPORTED GLOBAL )
+    target_include_directories( libpfm INTERFACE ${LIBPFM_INCLUDE_DIR} )
+    target_link_libraries( libpfm INTERFACE ${LIBPFM_LIBRARY_FILE} )
+endif()
 
 #############################################################################
 # Locally installed sources
@@ -106,7 +117,11 @@ target_include_directories( google_sparsehash INTERFACE ${source_dir}/install/in
 # Our binaries
 #############################################################################
 
-add_library( perfcounter STATIC src/PerfCounter.cpp )
+add_library( perfcounter STATIC src/PerfCounter.cpp src/PerfGroup.cpp )
+target_link_libraries( perfcounter PRIVATE libpfm )
+
+add_executable( testPerfGroup src/testPerfGroup.cpp )
+target_link_libraries( testPerfGroup perfcounter )
 
 add_executable( std_map src/std_map )
 target_link_libraries( std_map perfcounter )
@@ -126,6 +141,7 @@ target_link_libraries( folly_f14_value_map perfcounter folly )
 add_executable( folly_f14_vector_map src/folly_f14_vector_map.cc )
 target_link_libraries( folly_f14_vector_map perfcounter folly )
 
+# abseil has a target with the same name so we added the exec_ prefix
 add_executable( exec_absl_btree_map src/absl_btree_map.cc )
 target_link_libraries( exec_absl_btree_map absl::btree perfcounter )
 set_target_properties( exec_absl_btree_map PROPERTIES OUTPUT_NAME absl_btree_map )

@@ -7,6 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "PerfGroup.h"
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -40,7 +41,7 @@ static const std::int64_t SEED = 0;
 static std::mt19937_64 generator(SEED);
 
 #ifndef ITERATE_INT
-#define ITERATE_INT(it) for (const auto& it : hash)
+#define ITERATE_INT(it) for (const auto &it : hash)
 #endif
 
 #ifndef SHUFFLE_STR_ARRAY
@@ -48,18 +49,20 @@ static std::mt19937_64 generator(SEED);
   std::shuffle(keys.begin(), keys.end(), generator)
 #endif
 
-std::size_t get_memory_usage_bytes() {
+std::size_t get_memory_usage_bytes()
+{
   std::ifstream file("/proc/self/statm");
 
   std::size_t memory;
-  file >> memory;  // Ignore first
+  file >> memory; // Ignore first
   file >> memory;
 
   return memory * getpagesize();
 }
 
 std::string get_random_alphanum_string(std::size_t min_size,
-                                       std::size_t max_size) {
+                                       std::size_t max_size)
+{
   std::uniform_int_distribution<std::size_t> rd_uniform_size(min_size,
                                                              max_size);
   size_t size = rd_uniform_size(generator);
@@ -68,7 +71,8 @@ std::string get_random_alphanum_string(std::size_t min_size,
       0, ALPHANUMERIC_CHARS.size() - 1);
 
   std::string str(size, '\0');
-  for (std::size_t i = 0; i < size; i++) {
+  for (std::size_t i = 0; i < size; i++)
+  {
     str[i] = ALPHANUMERIC_CHARS[rd_uniform(generator)];
   }
 
@@ -78,7 +82,8 @@ std::string get_random_alphanum_string(std::size_t min_size,
 /**
  * Generate a vector [0, nb_ints) and shuffle it
  */
-std::vector<std::int64_t> get_random_shuffle_range_ints(std::size_t nb_ints) {
+std::vector<std::int64_t> get_random_shuffle_range_ints(std::size_t nb_ints)
+{
   std::vector<std::int64_t> random_shuffle_ints(nb_ints);
   std::iota(random_shuffle_ints.begin(), random_shuffle_ints.end(), 0);
   std::shuffle(random_shuffle_ints.begin(), random_shuffle_ints.end(),
@@ -92,11 +97,13 @@ std::vector<std::int64_t> get_random_shuffle_range_ints(std::size_t nb_ints) {
  */
 std::vector<std::int64_t> get_random_full_ints(
     std::size_t nb_ints, std::int64_t min = 0,
-    std::int64_t max = std::numeric_limits<std::int64_t>::max()) {
+    std::int64_t max = std::numeric_limits<std::int64_t>::max())
+{
   std::uniform_int_distribution<std::int64_t> rd_uniform(min, max);
 
   std::vector<std::int64_t> random_ints(nb_ints);
-  for (std::size_t i = 0; i < random_ints.size(); i++) {
+  for (std::size_t i = 0; i < random_ints.size(); i++)
+  {
     random_ints[i] = rd_uniform(generator);
   }
 
@@ -105,73 +112,42 @@ std::vector<std::int64_t> get_random_full_ints(
 
 std::vector<std::string> get_random_alphanum_strings(std::size_t nb_strings,
                                                      std::size_t min_size,
-                                                     std::size_t max_size) {
+                                                     std::size_t max_size)
+{
   std::vector<std::string> random_strings(nb_strings);
-  for (std::size_t i = 0; i < random_strings.size(); i++) {
+  for (std::size_t i = 0; i < random_strings.size(); i++)
+  {
     random_strings[i] = get_random_alphanum_string(min_size, max_size);
   }
 
   return random_strings;
 }
 
-#include <linux/perf_event.h>
-
-#include "PerfCounter.h"
-class measurements {
- public:
+class measurements
+{
+public:
   measurements()
       : m_memory_usage_bytes_start(get_memory_usage_bytes()),
-        m_chrono_start(std::chrono::high_resolution_clock::now()),
-        cycles("cycles", PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES),
-        instructions("instructions", PERF_TYPE_HARDWARE,
-                     PERF_COUNT_HW_INSTRUCTIONS),
-        cachemisses("cachemisses", PERF_TYPE_HW_CACHE,
-                    PERF_COUNT_HW_CACHE_MISSES),
-        branchmisses("branchmisses", PERF_TYPE_HARDWARE,
-                     PERF_COUNT_HW_BRANCH_MISSES),
-        tlbmisses("tlbmisses", PERF_TYPE_HW_CACHE,
-                  PERF_COUNT_HW_CACHE_DTLB | PERF_COUNT_HW_CACHE_OP_READ << 8 |
-                      PERF_COUNT_HW_CACHE_RESULT_MISS << 16),
-        pagefaults("pagefaults", PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS),
-        pagefaultsmin("pagefaultsmin", PERF_TYPE_SOFTWARE,
-                      PERF_COUNT_SW_PAGE_FAULTS_MIN),
-        pagefaultsmaj("pagefaultsmaj", PERF_TYPE_SOFTWARE,
-                      PERF_COUNT_SW_PAGE_FAULTS_MAJ),
-        branches("branches", PERF_TYPE_HARDWARE,
-                 PERF_COUNT_HW_BRANCH_INSTRUCTIONS),
-        stalledfront("stalledfront", PERF_TYPE_HARDWARE,
-                     PERF_COUNT_HW_STALLED_CYCLES_FRONTEND),
-        stalledback("stalledback", PERF_TYPE_HARDWARE,
-                    PERF_COUNT_HW_STALLED_CYCLES_BACKEND),
-        migrations("migrations", PERF_TYPE_SOFTWARE,
-                   PERF_COUNT_SW_CPU_MIGRATIONS),
-        contextswitches("ctxswitches", PERF_TYPE_SOFTWARE,
-                        PERF_COUNT_SW_CONTEXT_SWITCHES),
-        cpuclock("cpuclock", PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_CLOCK),
-        taskclock("taskclock", PERF_TYPE_SOFTWARE, PERF_COUNT_SW_TASK_CLOCK) {
-    set_chrono_start();
+        m_chrono_start(std::chrono::high_resolution_clock::now())
+  {
+    std::vector<std::string> names = {"cycles:u", "cache-misses:u", "branch-misses:u", "dTLB-load-misses:u", "page-faults:u", "minor-faults:u", "major-faults:u", "branches:u", "stalled-cycles-frontend:u",
+                                      "stalled-cycles-backend:u", "migrations:u", "context-switches:u", "cpu-clock:u", "task-clock:u"};
+
+    if (!group.init(names))
+    {
+      std::cerr << "Could not initialize performance counter group" << std::endl;
+    }
+    start();
   }
 
-  void set_chrono_start() {
-    cycles.start();
-    instructions.start();
-    cachemisses.start();
-    branchmisses.start();
-    pagefaults.start();
-    pagefaultsmin.start();
-    pagefaultsmaj.start();
-    branches.start();
-    stalledfront.start();
-    stalledback.start();
-    tlbmisses.start();
-    migrations.start();
-    contextswitches.start();
-    cpuclock.start();
-    taskclock.start();
+  void start()
+  {
+    group.start();
     m_chrono_start = std::chrono::high_resolution_clock::now();
   }
 
-  ~measurements() {
+  ~measurements()
+  {
     const auto chrono_end = std::chrono::high_resolution_clock::now();
     const std::size_t memory_usage_bytes_end = get_memory_usage_bytes();
 
@@ -182,22 +158,16 @@ class measurements {
         (memory_usage_bytes_end > m_memory_usage_bytes_start)
             ? memory_usage_bytes_end - m_memory_usage_bytes_start
             : 0;
-
-    std::cout << nb_seconds << " " << used_memory_bytes << " " << cycles.stop()
-              << " " << instructions.stop() << " " << cachemisses.stop() << " "
-              << branchmisses.stop() << " " << branches.stop() << " "
-              << pagefaults.stop() << " " << pagefaultsmin.stop() << " "
-              << pagefaultsmaj.stop() << " " << stalledfront.stop() << " "
-              << stalledback.stop() << " " << tlbmisses.stop() << " "
-              << migrations.stop() << " " << contextswitches.stop() << " "
-              << cpuclock.stop() << " " << taskclock.stop() << " ";
+    group.stop();
+    std::cout << nb_seconds << " " << used_memory_bytes << " ";
+    for (size_t j = 0; j < group.size(); ++j)
+    {
+      std::cout << group[j] << " ";
+    }
   }
 
- private:
-  PerfCounter cycles, instructions, cachemisses, branchmisses, tlbmisses;
-  PerfCounter migrations, contextswitches, cpuclock, taskclock;
-  PerfCounter pagefaults, pagefaultsmin, pagefaultsmaj, branches;
-  PerfCounter stalledfront, stalledback;
+private:
+  PerfGroup group;
   std::size_t m_memory_usage_bytes_start;
   std::chrono::time_point<std::chrono::high_resolution_clock> m_chrono_start;
 };
@@ -206,7 +176,8 @@ static std::int64_t num_keys;
 static std::string test_type;
 static std::int64_t value;
 
-static bool process_integers() {
+static bool process_integers()
+{
   bool ret = true;
 
 #ifdef SETUP_INT
@@ -224,150 +195,183 @@ static bool process_integers() {
       test_type == "insert_random_shuffle_range_reserve" ||
       test_type == "read_random_shuffle_range_after_delete" ||
       test_type == "iteration_random_shuffle_range" ||
-      test_type == "delete_random_shuffle_range") {
-    if (test_type == "insert_random_shuffle_range_reserve") {
+      test_type == "delete_random_shuffle_range")
+  {
+    if (test_type == "insert_random_shuffle_range_reserve")
+    {
       RESERVE_INT(num_keys);
     }
     keys = get_random_shuffle_range_ints(num_keys);
-  } else if (test_type == "insert_random_full" ||
-             test_type == "reinsert_random_full" ||
-             test_type == "read_random_full" ||
-             test_type == "read_miss_random_full" ||
-             test_type == "insert_random_full_reserve" ||
-             test_type == "read_random_full_after_delete" ||
-             test_type == "iteration_random_full" ||
-             test_type == "delete_random_full") {
-    if (test_type == "insert_random_full_reserve") {
+  }
+  else if (test_type == "insert_random_full" ||
+           test_type == "reinsert_random_full" ||
+           test_type == "read_random_full" ||
+           test_type == "read_miss_random_full" ||
+           test_type == "insert_random_full_reserve" ||
+           test_type == "read_random_full_after_delete" ||
+           test_type == "iteration_random_full" ||
+           test_type == "delete_random_full")
+  {
+    if (test_type == "insert_random_full_reserve")
+    {
       RESERVE_INT(num_keys);
     }
     keys = get_random_full_ints(num_keys);
   }
 
   if (test_type == "insert_random_shuffle_range" ||
-      test_type == "insert_random_full") {
+      test_type == "insert_random_full")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
   }
 
   else if (test_type == "insert_random_shuffle_range_reserve" ||
-           test_type == "insert_random_full_reserve") {
+           test_type == "insert_random_full_reserve")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
   }
 
   else if (test_type == "reinsert_random_shuffle_range" ||
-           test_type == "reinsert_random_full") {
+           test_type == "reinsert_random_full")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
     std::shuffle(keys.begin(), keys.end(), generator);
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
   }
 
   else if (test_type == "read_random_shuffle_range" ||
-           test_type == "read_random_full") {
+           test_type == "read_random_full")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
 
     std::shuffle(keys.begin(), keys.end(), generator);
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_INT_EXISTING(keys[i]);
     }
   }
 
   else if (test_type == "read_miss_random_shuffle_range" ||
-           test_type == "read_miss_random_full") {
+           test_type == "read_miss_random_full")
+  {
     std::vector<std::int64_t> keys_read;
-    if (test_type == "read_miss_random_shuffle_range") {
+    if (test_type == "read_miss_random_shuffle_range")
+    {
       keys_read = get_random_full_ints(
           num_keys, std::numeric_limits<std::int64_t>::min(), -3);
-    } else if (test_type == "read_miss_random_full") {
+    }
+    else if (test_type == "read_miss_random_full")
+    {
       keys_read = get_random_full_ints(
           num_keys, std::numeric_limits<std::int64_t>::min(), -3);
     }
 
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_INT_MISSING(keys_read[i]);
     }
   }
 
   else if (test_type == "read_random_shuffle_range_after_delete" ||
-           test_type == "read_random_full_after_delete") {
+           test_type == "read_random_full_after_delete")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
 
     std::shuffle(keys.begin(), keys.end(), generator);
-    for (std::int64_t i = 0; i < num_keys / 2; i++) {
+    for (std::int64_t i = 0; i < num_keys / 2; i++)
+    {
       DELETE_INT(keys[i]);
     }
 
     std::shuffle(keys.begin(), keys.end(), generator);
 
     std::int64_t nb_found = 0;
-    m.set_chrono_start();
-    std::string s_val;  // for kyotocabinet_stash
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    std::string s_val; // for kyotocabinet_stash
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_INT_EXISTING_COUNT(keys[i], nb_found);
     }
 
-    if (nb_found != num_keys / 2) {
+    if (nb_found != num_keys / 2)
+    {
       std::cerr << "error, duplicates\n";
       std::exit(6);
     }
   }
 
   else if (test_type == "iteration_random_shuffle_range" ||
-           test_type == "iteration_random_full") {
+           test_type == "iteration_random_full")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
 
-    m.set_chrono_start();
+    m.start();
     ITERATE_INT(it) { CHECK_INT_ITERATOR_VALUE(it, value); }
   }
 
   else if (test_type == "delete_random_shuffle_range" ||
-           test_type == "delete_random_full") {
+           test_type == "delete_random_full")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_INT(keys[i], value);
     }
 
     std::shuffle(keys.begin(), keys.end(), generator);
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       DELETE_INT(keys[i]);
     }
   }
 
-  else {
+  else
+  {
     ret = false;
   }
 
-  if (ret) {
+  if (ret)
+  {
     float load_factor_int = 0;
     load_factor_int = LOAD_FACTOR_INT_HASH(hash);
     std::cout << load_factor_int << std::endl;
@@ -381,7 +385,8 @@ static bool process_integers() {
   return ret;
 }
 
-static bool process_strings() {
+static bool process_strings()
+{
   bool ret = true;
 #ifdef SETUP_STR
   SETUP_STR;
@@ -397,18 +402,23 @@ static bool process_strings() {
       test_type == "read_small_string" ||
       test_type == "read_miss_small_string" ||
       test_type == "read_small_string_after_delete" ||
-      test_type == "delete_small_string") {
-    if (test_type == "read_miss_small_string") {
+      test_type == "delete_small_string")
+  {
+    if (test_type == "read_miss_small_string")
+    {
       RESERVE_STR(num_keys);
     }
     keys = get_random_alphanum_strings(num_keys, SMALL_STRING_MIN_SIZE,
                                        SMALL_STRING_MAX_SIZE);
-  } else if (test_type == "insert_string" || test_type == "reinsert_string" ||
-             test_type == "insert_string_reserve" ||
-             test_type == "read_string" || test_type == "read_miss_string" ||
-             test_type == "read_string_after_delete" ||
-             test_type == "delete_string") {
-    if (test_type == "read_miss_string") {
+  }
+  else if (test_type == "insert_string" || test_type == "reinsert_string" ||
+           test_type == "insert_string_reserve" ||
+           test_type == "read_string" || test_type == "read_miss_string" ||
+           test_type == "read_string_after_delete" ||
+           test_type == "delete_string")
+  {
+    if (test_type == "read_miss_string")
+    {
       RESERVE_STR(num_keys);
     }
     keys =
@@ -417,44 +427,53 @@ static bool process_strings() {
 
   if (test_type == "insert_small_string" || test_type == "insert_string" ||
       test_type == "insert_small_string_reserve" ||
-      test_type == "insert_string_reserve") {
+      test_type == "insert_string_reserve")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
   }
 
   else if (test_type == "reinsert_small_string" ||
-           test_type == "reinsert_string") {
+           test_type == "reinsert_string")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
     SHUFFLE_STR_ARRAY(keys);
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
   }
 
-  else if (test_type == "read_small_string" || test_type == "read_string") {
+  else if (test_type == "read_small_string" || test_type == "read_string")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], 1);
     }
 
     SHUFFLE_STR_ARRAY(keys);
 
-    std::string s_val;  // for leveldb
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    std::string s_val; // for leveldb
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_STR_EXISTING(keys[i]);
     }
   }
 
   else if (test_type == "read_miss_small_string" ||
-           test_type == "read_miss_string") {
+           test_type == "read_miss_string")
+  {
     std::vector<std::string> keys_read;
     if (test_type == "read_miss_string")
       keys_read = get_random_alphanum_strings(num_keys, STRING_MIN_SIZE,
@@ -464,62 +483,74 @@ static bool process_strings() {
                                               SMALL_STRING_MAX_SIZE);
 
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
 
-    std::string s_val;  // for kyotocabinet_stash
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    std::string s_val; // for kyotocabinet_stash
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_STR_MISSING(keys_read[i]);
     }
   }
 
   else if (test_type == "read_small_string_after_delete" ||
-           test_type == "read_string_after_delete") {
+           test_type == "read_string_after_delete")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
 
     SHUFFLE_STR_ARRAY(keys);
-    for (std::int64_t i = 0; i < num_keys / 2; i++) {
+    for (std::int64_t i = 0; i < num_keys / 2; i++)
+    {
       DELETE_STR(keys[i]);
     }
     SHUFFLE_STR_ARRAY(keys);
 
     std::int64_t nb_found = 0;
-    std::string s_val;  // for kyotocabinet_stash
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    std::string s_val; // for kyotocabinet_stash
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       FIND_STR_EXISTING_COUNT(keys[i], nb_found);
     }
 
-    if (nb_found != num_keys / 2) {
+    if (nb_found != num_keys / 2)
+    {
       std::cerr << "error, duplicates\n";
       std::exit(6);
     }
   }
 
-  else if (test_type == "delete_small_string" || test_type == "delete_string") {
+  else if (test_type == "delete_small_string" || test_type == "delete_string")
+  {
     measurements m;
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       INSERT_STR(keys[i], value);
     }
 
     SHUFFLE_STR_ARRAY(keys);
 
-    m.set_chrono_start();
-    for (std::int64_t i = 0; i < num_keys; i++) {
+    m.start();
+    for (std::int64_t i = 0; i < num_keys; i++)
+    {
       DELETE_STR(keys[i]);
     }
   }
 
-  else {
+  else
+  {
     ret = false;
   }
 
-  if (ret) {
+  if (ret)
+  {
     float load_factor_str = 0;
     load_factor_str = LOAD_FACTOR_STR_HASH(str_hash);
     std::cout << load_factor_str << std::endl;
@@ -533,17 +564,21 @@ static bool process_strings() {
   return ret;
 }
 
-int main(int argc, char** argv) {
-  if (argc != 3) {
+int main(int argc, char **argv)
+{
+  if (argc != 3)
+  {
     std::cerr << argv[0] << " num_keys test_type\n";
     return 1;
   }
+  PerfGroup::initialize();
 
   num_keys = std::stoll(argv[1]);
   test_type = argv[2];
   value = 1;
 
-  if (!process_integers() && !process_strings()) {
+  if (!process_integers() && !process_strings())
+  {
     std::cerr << "Unknown test type: " << test_type << ".\n";
     // Do not change the exit status 71! It is used by bench.py
     std::exit(71);
