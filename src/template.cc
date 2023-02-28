@@ -21,6 +21,8 @@
 // probability is so so low and the impact nearly null that it's not really
 // worth it).
 
+static std::vector<std::string> metrics = {"cycles", "cache-misses", "branch-misses"};
+
 static const std::array<char, 62> ALPHANUMERIC_CHARS = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
     'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -130,14 +132,7 @@ public:
       : m_memory_usage_bytes_start(get_memory_usage_bytes()),
         m_chrono_start(std::chrono::high_resolution_clock::now())
   {
-    std::vector<std::string> names = {"cycles", "cache-misses", "branch-misses", "dTLB-load-misses",
-                                      "minor-faults", "major-faults", "branches", "stalled-cycles-frontend",
-                                      "stalled-cycles-backend", "migrations", "context-switches", "cpu-clock", "task-clock",
-                                      "L1-dcache-load-misses",
-                                      "L1-dcache-loads", "L1-dcache-prefetches", "L1-icache-load-misses",
-                                      "L1-icache-loads", "branch-load-misses", "branch-loads"};
-
-    if (!group.init(names))
+    if (!group.init(metrics))
     {
       throw std::runtime_error("Could not initialize performance counter group");
     }
@@ -574,23 +569,64 @@ static bool process_strings()
   return ret;
 }
 
+static std::string trim(const std::string &s)
+{
+  auto pos = s.find_first_not_of(" \r\t\n");
+  if (pos == std::string::npos)
+    return {};
+  auto rpos = s.find_last_not_of(" \r\t\n");
+  if (rpos == std::string::npos)
+    return {};
+  std::string result = s.substr(pos, rpos - pos + 1);
+  return result;
+}
+
+static bool read_metrics(const std::string &filename)
+{
+  std::ifstream ifs(filename);
+  std::string line;
+  metrics.clear();
+  while (std::getline(ifs, line))
+  {
+    line = trim(line);
+    if (!line.empty())
+      metrics.push_back(line);
+  }
+  return !metrics.empty();
+}
+
 int main(int argc, char **argv)
 {
-  if (argc != 3)
+  try
   {
-    std::cerr << argv[0] << " num_keys test_type\n";
-    return 1;
+    if (argc < 3)
+    {
+      std::cerr << argv[0] << " num_keys test_type [metrics_file]\n";
+      return 1;
+    }
+    if (argc >= 4)
+    {
+      if (!read_metrics(argv[3]))
+      {
+        std::cerr << "Could not read file " << argv[3] << std::endl;
+        return 5;
+      }
+    }
+    PerfGroup::initialize();
+
+    num_keys = std::stoll(argv[1]);
+    test_type = argv[2];
+    value = 1;
+
+    if (!process_integers() && !process_strings())
+    {
+      std::cerr << "Unknown test type: " << test_type << ".\n";
+      // Do not change the exit status 71! It is used by bench.py
+      std::exit(71);
+    }
   }
-  PerfGroup::initialize();
-
-  num_keys = std::stoll(argv[1]);
-  test_type = argv[2];
-  value = 1;
-
-  if (!process_integers() && !process_strings())
+  catch (std::exception &e)
   {
-    std::cerr << "Unknown test type: " << test_type << ".\n";
-    // Do not change the exit status 71! It is used by bench.py
-    std::exit(71);
+    std::cerr << "Exception: " << e.what() << std::endl;
   }
 }
