@@ -43,3 +43,6 @@ rocksdb
 khash
 # nata88
 # nataF8
+ankerl_unordered_dense_map
+emhash7
+emhash8
