@@ -130,19 +130,26 @@ public:
       : m_memory_usage_bytes_start(get_memory_usage_bytes()),
         m_chrono_start(std::chrono::high_resolution_clock::now())
   {
-    std::vector<std::string> names = {"cycles:u", "cache-misses:u", "branch-misses:u", "dTLB-load-misses:u", "page-faults:u", "minor-faults:u", "major-faults:u", "branches:u", "stalled-cycles-frontend:u",
-                                      "stalled-cycles-backend:u", "migrations:u", "context-switches:u", "cpu-clock:u", "task-clock:u"};
+    std::vector<std::string> names = {"cycles", "cache-misses", "branch-misses", "dTLB-load-misses",
+                                      "minor-faults", "major-faults", "branches", "stalled-cycles-frontend",
+                                      "stalled-cycles-backend", "migrations", "context-switches", "cpu-clock", "task-clock",
+                                      "L1-dcache-load-misses",
+                                      "L1-dcache-loads", "L1-dcache-prefetches", "L1-icache-load-misses",
+                                      "L1-icache-loads", "branch-load-misses", "branch-loads"};
 
     if (!group.init(names))
     {
-      std::cerr << "Could not initialize performance counter group" << std::endl;
+      throw std::runtime_error("Could not initialize performance counter group");
     }
     start();
   }
 
   void start()
   {
-    group.start();
+    if (!group.start())
+    {
+      throw std::runtime_error("Could not start performance counter");
+    }
     m_chrono_start = std::chrono::high_resolution_clock::now();
   }
 
@@ -158,7 +165,10 @@ public:
         (memory_usage_bytes_end > m_memory_usage_bytes_start)
             ? memory_usage_bytes_end - m_memory_usage_bytes_start
             : 0;
-    group.stop();
+    if (!group.stop())
+    {
+      // throw std::runtime_error("Could not stop performance group");
+    }
     std::cout << nb_seconds << " " << used_memory_bytes << " ";
     for (size_t j = 0; j < group.size(); ++j)
     {
