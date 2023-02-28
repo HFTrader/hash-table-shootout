@@ -8,6 +8,7 @@ set( CMAKE_CXX_STANDARD 17 )
 #############################################################################
 # System installed sources
 #############################################################################
+find_package(Python3 REQUIRED COMPONENTS Development )
 find_package(Boost COMPONENTS container filesystem )
 find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(PkgConfig REQUIRED)
@@ -44,16 +45,22 @@ FetchContent_Declare( libcuckoo          GIT_REPOSITORY https://github.com/effic
 FetchContent_Declare( bplus-tree         GIT_REPOSITORY https://github.com/berenm/bplus-tree.git GIT_TAG version/2.0.0 )
 FetchContent_Declare( klibs              GIT_REPOSITORY https://github.com/attractivechaos/klib.git )
 FetchContent_Declare( folly              GIT_REPOSITORY https://github.com/facebook/folly.git GIT_TAG main )
+FetchContent_Declare( ankerl             GIT_REPOSITORY https://github.com/martinus/unordered_dense.git GIT_TAG main )
+FetchContent_Declare( emhash             GIT_REPOSITORY https://github.com/ktprime/emhash.git )
 
 FetchContent_MakeAvailable( 
     abseil-cpp array-hash hopscotch-map ordered-map 
-    robin-map sparse-map ordered-patch-map libcuckoo  )
+    robin-map sparse-map ordered-patch-map libcuckoo ankerl )
 
 # Just compile a few files from Folly (HACK)
 
 ###############################
 # Header-only packages
 ###############################
+
+FetchContent_Populate( emhash )
+add_library( emhash INTERFACE IMPORTED GLOBAL)
+target_include_directories( emhash INTERFACE ${emhash_SOURCE_DIR} )
 
 FetchContent_Populate( sparsepp )
 add_library( spp_sparsemap INTERFACE IMPORTED GLOBAL)
@@ -254,13 +261,20 @@ target_link_libraries( kyotocabinet_hash perfcounter PkgConfig::kyotocabinet )
 add_executable( cuckoohash_map src/cuckoohash_map.cc )
 target_link_libraries( cuckoohash_map perfcounter libcuckoo )
 
-find_package( Python3 REQUIRED COMPONENTS Development )
-
 add_executable( python3_dict src/python3_dict.cc )
 target_link_libraries( python3_dict perfcounter Python3::Python )
 
 add_executable( bplus_tree src/bplus_tree.cc )
 target_link_libraries( bplus_tree perfcounter libbplus_tree PkgConfig::glib )
+
+add_executable( ankerl_unordered_dense_map src/ankerl_unordered_dense_map.cc )
+target_link_libraries( ankerl_unordered_dense_map perfcounter unordered_dense::unordered_dense)
+
+add_executable( emhash7 src/emhash7.cc )
+target_link_libraries( emhash7 perfcounter emhash )
+
+add_executable( emhash8 src/emhash8.cc )
+target_link_libraries( emhash8 perfcounter emhash )
 
 # # nata88
 # # nataF8
