@@ -132,6 +132,7 @@ target_include_directories( google_sparsehash INTERFACE ${source_dir}/install/in
 
 add_library( perfcounter STATIC src/PerfGroup.cpp )
 target_link_libraries( perfcounter PRIVATE libpfm )
+target_compile_definitions( perfcounter PUBLIC INT_KEY_TYPE=int64_t INT_VALUE_TYPE=int64_t )
 
 add_executable( testPerfGroup src/testPerfGroup.cpp )
 target_link_libraries( testPerfGroup perfcounter )
@@ -178,6 +179,7 @@ target_link_libraries( google_sparse_hash_map perfcounter google_sparsehash )
 
 add_executable( google_dense_hash_map src/google_dense_hash_map.cc )
 target_link_libraries( google_dense_hash_map perfcounter google_sparsehash )
+target_compile_definitions( google_dense_hash_map PRIVATE INT_HASH_TYPE=std::hash<int64_t> STR_HASH_TYPE=std::hash<std::string> )
 
 add_executable( google_dense_hash_map_mlf_0_9 src/google_dense_hash_map_mlf_0_9.cc )
 target_link_libraries( google_dense_hash_map_mlf_0_9 perfcounter google_sparsehash )
